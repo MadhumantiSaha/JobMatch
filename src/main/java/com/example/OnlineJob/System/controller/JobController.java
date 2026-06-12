@@ -1,0 +1,165 @@
+package com.example.OnlineJob.System.controller;
+
+import com.example.OnlineJob.System.model.Job;
+import com.example.OnlineJob.System.model.User;
+import com.example.OnlineJob.System.service.JobServices;
+import com.example.OnlineJob.System.util.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/job")
+public class JobController {
+
+    @Autowired
+    private JobServices jobServices;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    // CREATE
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> createJob(
+            @RequestBody Job job,
+            @RequestHeader("Authorization") String authHeader) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // Remove "Bearer " prefix
+            String token = authHeader.substring(7);
+
+            // Extract user ID from JWT
+            Long userId = jwtUtil.extractId(token);
+
+            // Set user ID in Job
+            User u = new User();
+            u.setId(userId);
+            job.setUserID(u);
+
+            Job savedJob = jobServices.addJob(job);
+
+            response.put("success", true);
+            response.put("message", "Job created successfully");
+            response.put("data", savedJob);
+
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+        } catch (Exception e) {
+
+            response.put("success", false);
+            response.put("error", e.getMessage());
+
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    // READ ALL
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getAllJobs() {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            List<Job> jobs = jobServices.getAllJobs();
+
+            response.put("success", true);
+            response.put("data", jobs);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (Exception e) {
+
+            response.put("success", false);
+            response.put("error", e.getMessage());
+
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+// READ BY ID
+    @GetMapping("/id")
+    public ResponseEntity<Map<String, Object>> getMyJobs(
+            @RequestHeader("Authorization") String authHeader) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String token = authHeader.substring(7);
+            Long id = jwtUtil.extractId(token);
+
+            System.out.println("Id: "+id);
+
+            User u = new User();
+            u.setId(id);
+
+            List<Job> jobs = jobServices.getJobsByUserId(u);
+
+            response.put("success", true);
+            response.put("data", jobs);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+
+            response.put("success", false);
+            response.put("error", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+    }
+
+    // UPDATE
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> updateJob(
+            @PathVariable Long id,
+            @RequestBody Job job) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Job updatedJob = jobServices.updateJob(id, job);
+
+            response.put("success", true);
+            response.put("message", "Job updated successfully");
+            response.put("data", updatedJob);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (Exception e) {
+
+            response.put("success", false);
+            response.put("error", e.getMessage());
+
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // DELETE
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> deleteJob(@PathVariable Long id) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String message = jobServices.deleteJob(id);
+
+            response.put("success", true);
+            response.put("message", message);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (Exception e) {
+
+            response.put("success", false);
+            response.put("error", e.getMessage());
+
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+}
