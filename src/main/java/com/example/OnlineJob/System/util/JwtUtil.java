@@ -18,11 +18,11 @@ public class JwtUtil {
     private final SecretKey key =
             Keys.hmacShaKeyFor(SECRET.getBytes());
 
-    // Generate Token
-    public String generateToken(Long id) {
+    public String generateToken(Long id, String role) {
 
         return Jwts.builder()
                 .setSubject(id.toString())
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(
                         new Date(System.currentTimeMillis() + 1000 * 60 * 60)
@@ -31,7 +31,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    // Extract ID
     public Long extractId(String token) {
 
         Claims claims = Jwts.parserBuilder()
@@ -43,11 +42,18 @@ public class JwtUtil {
         return Long.parseLong(claims.getSubject());
     }
 
-    // Validate Token
+    public String extractRole(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.get("role", String.class);
+    }
+
     public boolean validateToken(String token, Long id) {
-
         Long extractedId = extractId(token);
-
         return extractedId.equals(id);
     }
 }

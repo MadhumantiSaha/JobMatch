@@ -1,12 +1,15 @@
 package com.example.OnlineJob.System.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +22,7 @@ public class Job {
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false) // Many jobs belong to one user
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    @JsonBackReference
+    @JsonIgnore
     private User userID;
 
     private String postName;
@@ -31,5 +34,11 @@ public class Job {
     private Long salary;
 
     private String skills;
+
+    private String location;
+
+    @OneToMany(mappedBy = "job")
+    @JsonManagedReference("job-application")
+    private List<Application> applications;
 
 }

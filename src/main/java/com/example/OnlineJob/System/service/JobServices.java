@@ -31,9 +31,9 @@ public List<Job> getJobsByUserId(User user) {
 }
 
 //    Update all jobs
-    public Job updateJob(Long id, Job  updateJob){
-        Job job = jobRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
+    public Job updateJob(Job  updateJob){
+        Job job = jobRepository.findById(updateJob.getId())
+                .orElseThrow(() -> new RuntimeException("Job not found for the user"));
         if (updateJob.getPostName() != null){
             job.setPostName(updateJob.getPostName());
         }
