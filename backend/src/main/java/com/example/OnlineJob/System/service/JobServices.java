@@ -24,11 +24,16 @@ public class JobServices {
         return jobRepository.findAll();
     }
 
-//    Get all jobs by id
+//    Get all jobs by User id
 public List<Job> getJobsByUserId(User user) {
-
     return jobRepository.findJobByUserID(user);
 }
+
+//   Get all jobs by job id
+    public Job getJobById(Long id) {
+        return jobRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Job not found"));
+    }
 
 //    Update all jobs
     public Job updateJob(Job  updateJob){

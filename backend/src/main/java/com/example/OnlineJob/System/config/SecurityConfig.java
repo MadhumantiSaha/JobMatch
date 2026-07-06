@@ -93,11 +93,14 @@ public class SecurityConfig {
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/job/**"
-                        ).authenticated()
+                        ).permitAll()
 
                         .requestMatchers(
-                                HttpMethod.POST,
-                                "/job/**"
+                                "/job/jobpost"
+                        ).hasRole("job_provider")
+
+                        .requestMatchers(
+                                "/job/my-jobs"
                         ).hasRole("job_provider")
 
                         .requestMatchers(

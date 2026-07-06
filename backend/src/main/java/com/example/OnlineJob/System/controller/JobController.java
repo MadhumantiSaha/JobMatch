@@ -49,18 +49,31 @@ public class JobController {
             u.setId(userId);
             job.setUserID(u);
 
-            Job savedJob = jobServices.addJob(job);
+//            Job savedJob = jobServices.addJob(job);
+//
+//            response.put("success", true);
+//            response.put("message", "Job created successfully");
+//            response.put("data", savedJob);
+//
+//            return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+            jobServices.addJob(job);
 
             response.put("success", true);
             response.put("message", "Job created successfully");
-            response.put("data", savedJob);
 
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
         } catch (Exception e) {
 
             response.put("success", false);
             response.put("error", e.getMessage());
+
+            Job savedJob = jobServices.addJob(job);
+
+            System.out.println(savedJob.getId());
+            System.out.println(savedJob.getPostName());
+            System.out.println(savedJob.getJobType());
 
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -88,31 +101,21 @@ public class JobController {
         }
     }
 
-// READ BY ID
-    @GetMapping("/id")
-    public ResponseEntity<Map<String, Object>> getMyJobs(
-            @RequestHeader("Authorization") String authHeader) {
+// READ BY JOB ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> getJobById(@PathVariable Long id) {
 
         Map<String, Object> response = new HashMap<>();
 
         try {
-            String token = authHeader.substring(7);
-            Long id = jwtUtil.extractId(token);
-
-            System.out.println("Id: "+id);
-
-            User u = new User();
-            u.setId(id);
-
-            List<Job> jobs = jobServices.getJobsByUserId(u);
+            Job job = jobServices.getJobById(id);
 
             response.put("success", true);
-            response.put("data", jobs);
+            response.put("data", job);
 
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-
             response.put("success", false);
             response.put("error", e.getMessage());
 
@@ -120,8 +123,47 @@ public class JobController {
         }
     }
 
+//  READ BY USER ID
+    @GetMapping("/my-jobs")
+    public ResponseEntity<?> getMyJobs( @RequestHeader("Authorization") String authHeader) {
+
+//        Map<String, Object> response = new HashMap<>();
+//
+//        String token = authHeader.substring(7);
+//        Long id = jwtUtil.extractId(token);
+//
+//        User u = new User();
+//        u.setId(id);
+//
+//        List<Job> jobs = jobServices.getJobsByUserId(u);
+//
+//        response.put("success", true);
+//        response.put("count", jobs.size());
+//
+//        return ResponseEntity.ok(response);
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String token = authHeader.substring(7);
+            Long id = jwtUtil.extractId(token);
+            System.out.println("Id: "+id);
+            User u = new User();
+            u.setId(id);
+
+            List<Job> jobs = jobServices.getJobsByUserId(u);
+            response.put("success", true);
+            response.put("data", jobs);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+    }
+
     // UPDATE
-    @PutMapping
+    @PutMapping()
     public ResponseEntity<Map<String, Object>> updateJob(
             @RequestBody Job job) {
 

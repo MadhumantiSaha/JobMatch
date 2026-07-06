@@ -1,13 +1,15 @@
 package com.example.OnlineJob.System.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
 public class Application{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,9 +20,16 @@ public class Application{
     @JsonBackReference("user-application")
     private User jobSeeker;
 
-    @ManyToOne
+//    @ManyToOne
+//    @JoinColumn(name = "job_id")
+//    @JsonBackReference("job-application")
+//    private Job job;
+
+    private String resume;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "job_id")
-    @JsonBackReference("job-application")
+    @JsonIgnoreProperties("applications")
     private Job job;
 
     @Enumerated(EnumType.STRING)
@@ -35,4 +44,52 @@ public class Application{
     }
 
     private LocalDateTime appliedAt;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getJobSeeker() {
+        return jobSeeker;
+    }
+
+    public void setJobSeeker(User jobSeeker) {
+        this.jobSeeker = jobSeeker;
+    }
+
+    public Job getJob() {
+        return job;
+    }
+
+    public void setJob(Job job) {
+        this.job = job;
+    }
+
+    public ApplicationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ApplicationStatus status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getAppliedAt() {
+        return appliedAt;
+    }
+
+    public void setAppliedAt(LocalDateTime appliedAt) {
+        this.appliedAt = appliedAt;
+    }
+
+    public String getResume() {
+        return resume;
+    }
+
+    public void setResume(String resume) {
+        this.resume = resume;
+    }
 }

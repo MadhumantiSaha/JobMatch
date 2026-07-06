@@ -18,13 +18,7 @@ const Dashboard = () => {
     console.log("TOKEN =", token);
 
     const response = await fetch(
-      "http://localhost:8080/job",
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      "http://localhost:8080/job"
     );
 
     const result = await response.json();
@@ -45,7 +39,7 @@ const Dashboard = () => {
       <Navbar />
 
       <div className="dashboard-container">
-        <h1>Available Jobs</h1>
+        <h1>Latest Openings</h1>
 
         <div className="job-grid">
           {jobs.map((job) => (

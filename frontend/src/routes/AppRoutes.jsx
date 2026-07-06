@@ -9,6 +9,14 @@ import ProtectedRoute from "../components/protectedRoute";
 import Dashboard from "../pages/dashboard";
 import Profile from "../pages/profile";
 import UpdateProfile from "../pages/update-profile";
+import AppliedJobs from "../pages/job_seeker/applied-jobs";
+import PostJob from "../pages/job_provider/post-job";
+import MyJobs from "../pages/job_provider/my-jobs";
+import JobDetails from "../pages/job-Details"
+import ViewApplicant from "../pages/job_provider/view-applicant"
+import Jobs from "../pages/job_seeker/jobs"
+
+
 
 function AppRoutes() {
   return (
@@ -31,6 +39,12 @@ function AppRoutes() {
             <UpdateProfile />
           </ProtectedRoute>
         } />
+      <Route path="/job/:id" element={<ProtectedRoute><JobDetails /></ProtectedRoute>} />
+      <Route path="/applied-jobs" element={<ProtectedRoute><AppliedJobs /></ProtectedRoute>} />
+      <Route path="/post-job" element={<ProtectedRoute><PostJob /></ProtectedRoute>} />
+      <Route path="/my-jobs" element={<ProtectedRoute><MyJobs /></ProtectedRoute>} />
+      <Route path="/view-applicants/:jobId" element={<ViewApplicants />} />
+      <Route path="jobs" element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
     </Routes>
   );
 }

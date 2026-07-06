@@ -57,7 +57,7 @@ public class ApplicationController {
         }
     }
 
-    // Get all jobs applied by the logged-in user for job seekers
+    // Get all jobs applied by the logged-in job-seeker
     @GetMapping("/my-applications")
     public ResponseEntity<Map<String, Object>> getMyApplications(
             @RequestHeader("Authorization") String authHeader) {

@@ -38,9 +38,16 @@ const Login = () => {
 
       if (response.ok && result.success) {
         localStorage.setItem("token", result.token);
+
         localStorage.setItem(
           "user",
           JSON.stringify(result.data)
+        );
+
+        // Store the role separately
+        localStorage.setItem(
+          "role",
+          result.data.role
         );
 
         alert("Login Successful!");
