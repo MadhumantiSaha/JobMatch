@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.example.OnlineJob.System.model.Job;
 import com.example.OnlineJob.System.repository.JobRepository;
 import com.example.OnlineJob.System.repository.UserRepository;
+import com.example.OnlineJob.System.service.EmailService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,13 +19,16 @@ public class ApplicationServices {
     private final ApplicationRepository applicationRepository;
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
     public ApplicationServices(ApplicationRepository applicationRepository,
                                JobRepository jobRepository,
-                               UserRepository userRepository) {
+                               UserRepository userRepository,
+                               EmailService emailService) {
         this.applicationRepository = applicationRepository;
         this.jobRepository = jobRepository;
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     // Apply to a job
@@ -45,65 +49,75 @@ public class ApplicationServices {
         }
 
         Application application = new Application();
+
         application.setJob(job);
         application.setJobSeeker(user);
+
+        application.setName(user.getName());
+        application.setEmail(user.getEmail());
+        application.setContact(user.getContact());
+        application.setResume(user.getResume());
+
         application.setStatus(Application.ApplicationStatus.PENDING);
         application.setAppliedAt(LocalDateTime.now());
 
         return applicationRepository.save(application);
+
     }
 
-    // Get all applications of a job seeker
+    // UPDATE APPLICATION STATUS + SEND EMAIL
+    public Application updateStatus(Long applicationId, Application.ApplicationStatus status) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("Application not found"));
+
+        application.setStatus(status);
+        Application savedApplication = applicationRepository.save(application);
+
+        // Send email notification
+        if (savedApplication.getJobSeeker() != null &&
+                savedApplication.getJobSeeker().getEmail() != null) {
+
+            String jobTitle = (savedApplication.getJob() != null)
+                    ? "Job ID: " + savedApplication.getJob().getId()
+                    : "the position";
+
+            emailService.sendApplicationStatusUpdate(
+                    savedApplication.getJobSeeker().getEmail(),
+                    jobTitle,
+                    status.name(),
+                    savedApplication.getName() != null
+                            ? savedApplication.getName()
+                            : savedApplication.getJobSeeker().getName()
+            );
+        }
+
+        return savedApplication;
+    }
+
+    // Get all applications of a jobSeeker
     public List<Application> getMyApplications(User user) {
         return applicationRepository.findByJobSeeker(user);
     }
 
     // Get all applicants for a job
     public List<Application> getApplicationsByJob(Long jobId) {
-
         Job job = jobRepository.findById(jobId)
-                .orElseThrow(() ->
-                        new RuntimeException("Job not found"));
-
+                .orElseThrow(() -> new RuntimeException("Job not found"));
         return applicationRepository.findByJob(job);
-    }
-
-    // Update application status
-    public Application updateStatus(Long applicationId,
-                                    Application.ApplicationStatus status) {
-
-        Application application =
-                applicationRepository.findById(applicationId)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Application not found"));
-
-        application.setStatus(status);
-
-        return applicationRepository.save(application);
     }
 
     // Withdraw application
     public String withdrawApplication(Long applicationId) {
-
-        Application application =
-                applicationRepository.findById(applicationId)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Application not found"));
-
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("Application not found"));
         applicationRepository.delete(application);
-
         return "Application withdrawn successfully.";
     }
 
-    // Count applicants for a job
+    // Count applicants
     public Long countApplicants(Long jobId) {
-
         Job job = jobRepository.findById(jobId)
-                .orElseThrow(() ->
-                        new RuntimeException("Job not found"));
-
+                .orElseThrow(() -> new RuntimeException("Job not found"));
         return (long) applicationRepository.findByJob(job).size();
     }
 }

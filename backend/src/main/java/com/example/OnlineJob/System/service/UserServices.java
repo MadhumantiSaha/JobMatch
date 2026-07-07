@@ -19,6 +19,7 @@ import java.util.UUID;
 
 @Service
 public class UserServices {
+    private final String UPLOAD_DIR = "uploads/";
 
     private final PasswordEncoder passwordEncoder;
 
@@ -37,33 +38,46 @@ public class UserServices {
 
  //    Create - with password encryption
 
+//    public User saveUser(User user, MultipartFile img) throws IOException {
+//
+//        Path path = Paths.get(imageDir);
+//
+//        if (!Files.exists(path)) {
+//            Files.createDirectories(path);
+//        }
+//
+//        if (img != null && !img.isEmpty()) {
+//            String fileName = img.getOriginalFilename();
+//
+//            Files.copy(
+//                    img.getInputStream(),
+//                    path.resolve(fileName),
+//                    StandardCopyOption.REPLACE_EXISTING
+//            );
+//
+//            user.setImage(fileName);
+//        }
+//
+//        // Encrypt password BEFORE saving
+//        if (user.getPassword() != null &&
+//                !user.getPassword().isEmpty()) {
+//
+//            user.setPassword(
+//                    passwordEncoder.encode(user.getPassword())
+//            );
+//        }
+//
+//        return userRepository.save(user);
+//    }
+
     public User saveUser(User user, MultipartFile img) throws IOException {
-
-        Path path = Paths.get(imageDir);
-
-        if (!Files.exists(path)) {
-            Files.createDirectories(path);
-        }
-
         if (img != null && !img.isEmpty()) {
-            String fileName = img.getOriginalFilename();
-
-            Files.copy(
-                    img.getInputStream(),
-                    path.resolve(fileName),
-                    StandardCopyOption.REPLACE_EXISTING
-            );
-
-            user.setImage(fileName);
+            String imageFileName = saveFile(img, UPLOAD_DIR + "images/");
+            user.setImage(imageFileName);
         }
 
-        // Encrypt password BEFORE saving
-        if (user.getPassword() != null &&
-                !user.getPassword().isEmpty()) {
-
-            user.setPassword(
-                    passwordEncoder.encode(user.getPassword())
-            );
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
         return userRepository.save(user);
@@ -95,102 +109,126 @@ public class UserServices {
         return userRepository.save(user);
     }
 
-//    UPDATE
-    private String saveFile(MultipartFile file,
-                            String directory)
-            throws IOException {
-
+//    save updated files
+    private String saveFile(MultipartFile file, String directory) throws IOException {
         Path path = Paths.get(directory);
-
         if (!Files.exists(path)) {
             Files.createDirectories(path);
         }
 
-        String fileName =
-                UUID.randomUUID() + "_"
-                        + file.getOriginalFilename();
+        String originalFilename = file.getOriginalFilename();
+        String fileName = UUID.randomUUID() + "_" + originalFilename;
 
-        Files.copy(
-                file.getInputStream(),
-                path.resolve(fileName),
-                StandardCopyOption.REPLACE_EXISTING
-        );
+        Files.copy(file.getInputStream(), path.resolve(fileName),
+                StandardCopyOption.REPLACE_EXISTING);
 
         return fileName;
     }
 
-//    Update
-    public User updateUser(
-            User updateUser,
-            MultipartFile image,
-            MultipartFile resume,
-            MultipartFile companyDetails) throws IOException {
+
+    // Update method in UserServices.java
+    public User updateUser(User updateUser,
+                           MultipartFile image,
+                           MultipartFile resume,
+                           MultipartFile companyDetails) throws IOException{
 
         User user = userRepository.findById(updateUser.getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Update other fields
-        if (updateUser.getName() != null) {
-            user.setName(updateUser.getName());
+        // Update basic fields
+        if (updateUser.getName() != null) user.setName(updateUser.getName());
+        if (updateUser.getContact() != null) user.setContact(updateUser.getContact());
+        if (updateUser.getEmail() != null) user.setEmail(updateUser.getEmail());
+
+        if (updateUser.getPassword() != null && !updateUser.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(updateUser.getPassword()));
         }
 
-        if (updateUser.getContact() != null) {
-            user.setContact(updateUser.getContact());
-        }
-
-        if (updateUser.getEmail() != null) {
-            user.setEmail(updateUser.getEmail());
-        }
-
-        if (updateUser.getPassword() != null &&
-                !updateUser.getPassword().isEmpty()) {
-            user.setPassword(
-                    passwordEncoder.encode(updateUser.getPassword())
-            );
-        }
-
-        // Update image
+        // File updates with consistent paths
         if (image != null && !image.isEmpty()) {
-            // save image
-            user.setImage(saveFile(image, "/update"));
+            String imageFileName = saveFile(image, UPLOAD_DIR + "images/");
+            user.setImage(imageFileName);
         }
 
-        // Role-based updates
         if (user.getRole() == User.Role.job_seeker) {
-
             if (resume != null && !resume.isEmpty()) {
-                user.setResume(
-                        saveFile(resume, "uploads/resumes")
-                );
-            }
-
-            // Prevent job seekers from updating company details
-            if (companyDetails != null && !companyDetails.isEmpty()) {
-                throw new RuntimeException(
-                        "Job seekers cannot upload company details."
-                );
+                String resumeFileName = saveFile(resume, UPLOAD_DIR + "resumes/");
+                user.setResume(resumeFileName);
             }
         }
-
-        if (user.getRole() == User.Role.job_provider) {
-
+        else if (user.getRole() == User.Role.job_provider) {
             if (companyDetails != null && !companyDetails.isEmpty()) {
-                user.setCompanyDetails(
-                        saveFile(companyDetails,
-                                "uploads/companyDetails")
-                );
-            }
-
-            // Prevent job providers from uploading resumes
-            if (resume != null && !resume.isEmpty()) {
-                throw new RuntimeException(
-                        "Job providers cannot upload resumes."
-                );
+                String companyFileName = saveFile(companyDetails, UPLOAD_DIR + "company/");
+                user.setCompanyDetails(companyFileName);
             }
         }
 
         return userRepository.save(user);
     }
+//    Update
+//    public User updateUser(
+//            User updateUser,
+//            MultipartFile image,
+//            MultipartFile resume,
+//            MultipartFile companyDetails) throws IOException {
+//
+//        User user = userRepository.findById(updateUser.getId())
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        // Update other fields
+//        if (updateUser.getName() != null) {
+//            user.setName(updateUser.getName());
+//        }
+//        if (updateUser.getContact() != null) {
+//            user.setContact(updateUser.getContact());
+//        }
+//        if (updateUser.getEmail() != null) {
+//            user.setEmail(updateUser.getEmail());
+//        }
+//        if (updateUser.getPassword() != null &&
+//                !updateUser.getPassword().isEmpty()) {
+//            user.setPassword(
+//                    passwordEncoder.encode(updateUser.getPassword())
+//            );
+//        }
+//        // Update image
+//        if (image != null && !image.isEmpty()) {
+//            // save image
+//            user.setImage(saveFile(image, "/update"));
+//        }
+//        // Role-based updates
+//        if (user.getRole() == User.Role.job_seeker) {
+//
+//            if (resume != null && !resume.isEmpty()) {
+//                user.setResume(
+//                        saveFile(resume, "uploads/resumes")
+//                );
+//            }
+//            // Prevent job seekers from updating company details
+//            if (companyDetails != null && !companyDetails.isEmpty()) {
+//                throw new RuntimeException(
+//                        "Job seekers cannot upload company details."
+//                );
+//            }
+//        }
+//        if (user.getRole() == User.Role.job_provider) {
+//            if (companyDetails != null && !companyDetails.isEmpty()) {
+//                user.setCompanyDetails(
+//                        saveFile(companyDetails,
+//                                "uploads/companyDetails")
+//                );
+//            }
+//            // Prevent job providers from uploading resumes
+//            if (resume != null && !resume.isEmpty()) {
+//                throw new RuntimeException(
+//                        "Job providers cannot upload resumes."
+//                );
+//            }
+//        }
+//        return userRepository.save(user);
+//    }
+
+
 //    DELETE
     public void deleteUser(Long id){
         userRepository.deleteById(id);

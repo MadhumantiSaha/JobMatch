@@ -120,14 +120,6 @@ public class User {
       this.companyDetails = companyDetails;
    }
 
-   public List<Application> getApplications() {
-      return applications;
-   }
-
-   public void setApplications(List<Application> applications) {
-      this.applications = applications;
-   }
-
    public String getOtp() {
       return otp;
    }
@@ -142,5 +134,13 @@ public class User {
 
    public void setOtpExpiry(LocalDateTime otpExpiry) {
       this.otpExpiry = otpExpiry;
+   }
+
+   public List<Application> getApplications() {
+      return applications;
+   }
+
+   public void setApplications(List<Application> applications) {
+      this.applications = applications;
    }
 }

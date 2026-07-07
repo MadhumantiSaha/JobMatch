@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -329,43 +330,38 @@ public class UserController {
         }
     }
 
-    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Map<String, Object>> updateUser(
+//    Update user details
 
-            @RequestPart("user") User user,
-            @RequestPart(value = "image", required = false) MultipartFile image,
-            @RequestPart(value = "resume", required = false) MultipartFile resume,
-            @RequestPart(value = "companyDetails", required = false) MultipartFile companyDetails,
-            @RequestHeader("Authorization") String authHeader) {
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateUser(
+            @ModelAttribute User user,
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,           // Changed
+            @RequestParam(value = "resumeFile", required = false) MultipartFile resumeFile,       // Changed
+            @RequestParam(value = "companyFile", required = false) MultipartFile companyFile,     // Changed
+            @RequestHeader("Authorization") String authHeader) throws IOException {
 
         Map<String, Object> response = new HashMap<>();
 
         try {
             String token = authHeader.substring(7);
             Long userId = jwtUtil.extractId(token);
-
-            // Set the ID from JWT
             user.setId(userId);
 
             User updatedUser = userServices.updateUser(
-                    user,
-                    image,
-                    resume,
-                    companyDetails
+                    user, imageFile, resumeFile, companyFile
             );
 
             response.put("success", true);
-            response.put("data", updatedUser);
+            response.put("message", "Profile updated successfully");
+            response.put("data", updatedUser);   // Return updated user
 
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
+            e.printStackTrace();
             response.put("success", false);
             response.put("message", e.getMessage());
-            e.printStackTrace();
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 

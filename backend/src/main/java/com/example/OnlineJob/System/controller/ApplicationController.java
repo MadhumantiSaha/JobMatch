@@ -147,6 +147,8 @@ public class ApplicationController {
         }
     }
 
+
+
     // Withdraw application
     @DeleteMapping("/{applicationId}")
     public ResponseEntity<Map<String, Object>> withdrawApplication(

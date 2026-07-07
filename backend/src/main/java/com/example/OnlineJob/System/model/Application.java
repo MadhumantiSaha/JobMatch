@@ -15,15 +15,19 @@ public class Application{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;
+
+    private String email;
+
+    private String contact;
+
+    private LocalDateTime appliedAt;
+
+
     @ManyToOne
     @JoinColumn(name = "job_seeker_id")
     @JsonBackReference("user-application")
     private User jobSeeker;
-
-//    @ManyToOne
-//    @JoinColumn(name = "job_id")
-//    @JsonBackReference("job-application")
-//    private Job job;
 
     private String resume;
 
@@ -43,7 +47,6 @@ public class Application{
         HIRED
     }
 
-    private LocalDateTime appliedAt;
 
     public Long getId() {
         return id;
@@ -92,4 +95,29 @@ public class Application{
     public void setResume(String resume) {
         this.resume = resume;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
+    }
+
 }

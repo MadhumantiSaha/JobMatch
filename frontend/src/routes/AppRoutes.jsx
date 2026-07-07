@@ -12,9 +12,9 @@ import UpdateProfile from "../pages/update-profile";
 import AppliedJobs from "../pages/job_seeker/applied-jobs";
 import PostJob from "../pages/job_provider/post-job";
 import MyJobs from "../pages/job_provider/my-jobs";
-import JobDetails from "../pages/job-Details"
-import ViewApplicant from "../pages/job_provider/view-applicant"
-import Jobs from "../pages/job_seeker/jobs"
+import JobDetails from "../pages/job-details";
+import ViewApplicant from "../pages/job_provider/view-applicant";
+import Jobs from "../pages/job_seeker/jobs";
 
 
 
@@ -43,8 +43,22 @@ function AppRoutes() {
       <Route path="/applied-jobs" element={<ProtectedRoute><AppliedJobs /></ProtectedRoute>} />
       <Route path="/post-job" element={<ProtectedRoute><PostJob /></ProtectedRoute>} />
       <Route path="/my-jobs" element={<ProtectedRoute><MyJobs /></ProtectedRoute>} />
-      <Route path="/view-applicants/:jobId" element={<ViewApplicants />} />
       <Route path="jobs" element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
+      
+      <Route  
+        path="/view-applicant/:jobId"
+        element={
+          <ProtectedRoute>
+            <ViewApplicant />
+          </ProtectedRoute>
+        } />
+      <Route  
+        path="/view-applicants/:jobId"
+        element={
+          <ProtectedRoute>
+            <ViewApplicant />
+          </ProtectedRoute>
+        } />
     </Routes>
   );
 }

@@ -34,9 +34,10 @@ const ViewApplicants = () => {
   const updateStatus = async (applicationId, status) => {
     try {
       await axios.put(
-        `http://localhost:8080/application/${applicationId}`,
-        { status },
+        `http://localhost:8080/application/${applicationId}/status`,
+        null,
         {
+          params: { status },
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -99,15 +100,15 @@ const ViewApplicants = () => {
 
                     <div>
                       <h2 className="text-2xl font-semibold">
-                        {application.jobSeeker.name}
+                        {application.name}
                       </h2>
 
                       <p className="text-gray-600 mt-2">
-                        📧 {application.jobSeeker.email}
+                        📧 {application.email}
                       </p>
 
                       <p className="text-gray-600">
-                        📞 {application.jobSeeker.contact}
+                        📞 {application.contact}
                       </p>
 
                       <p className="text-gray-600">
@@ -116,9 +117,9 @@ const ViewApplicants = () => {
                         {new Date(application.appliedAt).toLocaleDateString()}
                       </p>
 
-                      {application.jobSeeker.resume && (
+                      {application.resume && (
                         <a
-                          href={`http://localhost:8080/uploads/resumes/${application.jobSeeker.resume}`}
+                          href={`http://localhost:8080/uploads/resumes/${application.resume}`}
                           target="_blank"
                           rel="noreferrer"
                           className="inline-block mt-4 text-blue-600 hover:underline font-medium"
