@@ -14,9 +14,9 @@ const UpdateProfile = () => {
     user?.contact || ""
   );
 
-  const [image, setImage] = useState(null);
-  const [resume, setResume] = useState(null);
-  const [companyDetails, setCompanyDetails] =
+  const [imageFile, setImage] = useState(null);
+  const [resumeFile, setResume] = useState(null);
+  const [companyFile, setCompanyDetails] =
     useState(null);
 
   const handleSubmit = async (e) => {
@@ -43,18 +43,18 @@ const UpdateProfile = () => {
         )
       );
 
-      if (image) {
-        formData.append("image", image);
+      if (imageFile) {
+        formData.append("image", imageFile);
       }
 
-      if (resume) {
-        formData.append("resume", resume);
+      if (resumeFile) {
+        formData.append("resume", resumeFile);
       }
 
-      if (companyDetails) {
+      if (companyFile) {
         formData.append(
           "companyDetails",
-          companyDetails
+          companyFile
         );
       }
 

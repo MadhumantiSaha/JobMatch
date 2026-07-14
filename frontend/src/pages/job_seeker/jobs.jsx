@@ -150,6 +150,12 @@ const Jobs = () => {
 
               <p>
 
+                <strong>Job ID:</strong> {job.id}
+
+              </p>
+
+              <p>
+
                 <strong>Location:</strong>{" "}
 
                 {job.location}

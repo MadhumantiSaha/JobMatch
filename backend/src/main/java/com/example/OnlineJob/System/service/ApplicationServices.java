@@ -9,9 +9,16 @@ import com.example.OnlineJob.System.model.Job;
 import com.example.OnlineJob.System.repository.JobRepository;
 import com.example.OnlineJob.System.repository.UserRepository;
 import com.example.OnlineJob.System.service.EmailService;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -31,8 +38,29 @@ public class ApplicationServices {
         this.emailService = emailService;
     }
 
-    // Apply to a job
-    public Application applyToJob(Long jobId, Long userId) {
+    private final String UPLOAD_DIR = "application resumes/";
+
+    private String saveResumeFile(MultipartFile file) throws IOException {
+        String directory = "applications/resumes/";
+        Path path = Paths.get(directory);
+
+        if (!Files.exists(path)) {
+            Files.createDirectories(path);
+        }
+
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+
+        Files.copy(
+                file.getInputStream(),
+                path.resolve(fileName),
+                StandardCopyOption.REPLACE_EXISTING
+        );
+
+        return fileName;
+    }
+
+    // Apply to a job - now supports resume upload
+    public Application applyToJob(Long jobId, Long userId, MultipartFile resumeFile) throws IOException {
 
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() ->
@@ -56,7 +84,14 @@ public class ApplicationServices {
         application.setName(user.getName());
         application.setEmail(user.getEmail());
         application.setContact(user.getContact());
-        application.setResume(user.getResume());
+
+        // Handle resume upload (priority to uploaded resume, fallback to user's resume)
+        if (resumeFile != null && !resumeFile.isEmpty()) {
+            String resumeFileName = saveResumeFile(resumeFile);
+            application.setResume(resumeFileName);
+        } else {
+            application.setResume(user.getResume());
+        }
 
         application.setStatus(Application.ApplicationStatus.PENDING);
         application.setAppliedAt(LocalDateTime.now());
@@ -64,6 +99,7 @@ public class ApplicationServices {
         return applicationRepository.save(application);
 
     }
+
 
     // UPDATE APPLICATION STATUS + SEND EMAIL
     public Application updateStatus(Long applicationId, Application.ApplicationStatus status) {

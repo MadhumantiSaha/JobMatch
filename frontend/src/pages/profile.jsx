@@ -63,6 +63,34 @@ const Profile = () => {
             readOnly
           />
         </div>
+        <div className="input-group">
+          <label>Image</label>
+          <input
+            type="text"
+            value={user?.image || ""}
+            readOnly
+          />
+        </div>
+
+        {user?.role === "job_seeker" && (
+        <div className="input-group">
+          <label>Resume</label>
+          <input
+            type="text"
+            value={user?.resume || ""}
+            readOnly
+          />
+        </div>)
+        }
+        {user?.role === "job_provider" && (
+        <div className="input-group">
+          <label>Company Details</label>
+          <input
+            type="text"
+            value={user?.companyDetails || ""}
+            readOnly
+          />
+        </div>)}
 
         <Link to="/update-profile">
           <button className="register-btn">

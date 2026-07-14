@@ -49,14 +49,6 @@ public class JobController {
             u.setId(userId);
             job.setUserID(u);
 
-//            Job savedJob = jobServices.addJob(job);
-//
-//            response.put("success", true);
-//            response.put("message", "Job created successfully");
-//            response.put("data", savedJob);
-//
-//            return new ResponseEntity<>(response, HttpStatus.CREATED);
-
             jobServices.addJob(job);
 
             response.put("success", true);
@@ -77,6 +69,12 @@ public class JobController {
 
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    // FILTER JOBS
+    @GetMapping("/filtered")
+    public ResponseEntity<Map<String, Object>> getAllFilteredJobs(){
+        Map<String, Object> response = new HashMap<>();
+
     }
     // READ ALL
     @GetMapping
@@ -126,21 +124,6 @@ public class JobController {
 //  READ BY USER ID
     @GetMapping("/my-jobs")
     public ResponseEntity<?> getMyJobs( @RequestHeader("Authorization") String authHeader) {
-
-//        Map<String, Object> response = new HashMap<>();
-//
-//        String token = authHeader.substring(7);
-//        Long id = jwtUtil.extractId(token);
-//
-//        User u = new User();
-//        u.setId(id);
-//
-//        List<Job> jobs = jobServices.getJobsByUserId(u);
-//
-//        response.put("success", true);
-//        response.put("count", jobs.size());
-//
-//        return ResponseEntity.ok(response);
 
         Map<String, Object> response = new HashMap<>();
 

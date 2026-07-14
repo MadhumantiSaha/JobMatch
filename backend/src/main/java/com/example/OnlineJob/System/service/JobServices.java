@@ -67,4 +67,14 @@ public List<Job> getJobsByUserId(User user) {
         jobRepository.delete(course);
         return "Job deleted successfully";
     }
+
+//    Filter jobs
+    public List<Job> searchJobs(String java, String python, String SAP) {
+        return jobRepository
+                .findByfiltering(
+                        java,
+                        python,
+                        SAP
+                );
+    }
 }

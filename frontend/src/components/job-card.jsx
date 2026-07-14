@@ -9,6 +9,8 @@ function JobCard({ job }) {
 
             <h2>{job.title}</h2>
 
+            <p><strong>Job ID:</strong> {job.id}</p>
+
             <h4>{job.company}</h4>
 
             <p>{job.location}</p>

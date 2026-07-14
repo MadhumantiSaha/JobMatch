@@ -22,6 +22,13 @@ public class Job {
     @EqualsAndHashCode.Exclude
     private User userID;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "user_name", referencedColumnName = "name", nullable = false)
+    @JsonIgnore
+//    @ToString.Exclude
+//    @EqualsAndHashCode.Exclude
+    private User userName;
+
     private String postName;
 
     private String description;
@@ -139,5 +146,13 @@ public class Job {
 
     public void setApplications(List<Application> applications) {
         this.applications = applications;
+    }
+
+    public User getUserName() {
+        return userName;
+    }
+
+    public void setUserName(User userName) {
+        this.userName = userName;
     }
 }

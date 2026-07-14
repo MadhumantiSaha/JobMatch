@@ -69,6 +69,7 @@ const MyJobs = () => {
             <div className="job-card" key={job.id}>
               <h2>{job.postName}</h2>
 
+              <p><strong>Job ID:</strong> {job.id}</p>
               <p><strong>Location:</strong> {job.location}</p>
               <p><strong>Salary:</strong> ₹{job.salary}</p>
               <p><strong>Experience:</strong> {job.experience}</p>

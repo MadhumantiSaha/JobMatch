@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface JobRepository extends JpaRepository<Job, Long> {
     List<Job> findJobByUserID(User user);
+    List<Job> findByfiltering(String postName, String skills, String location);
 }

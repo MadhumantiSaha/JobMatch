@@ -28,13 +28,44 @@ public class SecurityConfig {
     @Autowired
     private CustomAccessDeniedHandler accessDeniedHandler;
 
+//    @Bean
+//    public WebMvcConfigurer webMvcConfigurer() {
+//        System.out.println("Working Directory: " + System.getProperty("user.dir"));
+//
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//                registry.addResourceHandler("/uploads/**")
+//                        .addResourceLocations("file:uploads/");
+//
+//                // For resumes saved in applications/resumes/
+//                registry.addResourceHandler("/files/resumes/**")
+////                        .addResourceLocations("file:uploads/resumes/");
+//                        .addResourceLocations("file:" + System.getProperty("user.dir") + "/uploads/resumes/");
+//
+//                // For user uploaded resumes (if any)
+//                registry.addResourceHandler("/uploads/resumes/**")
+//                        .addResourceLocations("file:uploads/resumes/");
+//
+//                // For images
+//                registry.addResourceHandler("/uploads/images/**")
+//                        .addResourceLocations("file:register/images/");
+//
+//                registry.addResourceHandler("/uploads/**")
+//                        .addResourceLocations("file:uploads/");
+//            }
+//        };
+//    }
     @Bean
     public WebMvcConfigurer webMvcConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addResourceHandlers(ResourceHandlerRegistry registry) {
-                registry.addResourceHandler("/uploads/**")
-                        .addResourceLocations("file:uploads/");
+
+                registry.addResourceHandler("/files/**")
+                        .addResourceLocations(
+                                "file:" + System.getProperty("user.dir") + "/uploads/"
+                        );
             }
         };
     }
@@ -109,6 +140,11 @@ public class SecurityConfig {
                         ).permitAll()
 
                         .requestMatchers(
+                                HttpMethod.GET,
+                                "/files/**"
+                        ).permitAll()
+
+                        .requestMatchers(
                                 "/job/jobpost"
                         ).hasRole("job_provider")
 
@@ -140,7 +176,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/application/job/**"
-                        ).hasRole("job_provider")
+                        ).hasAnyRole("job_provider", "job_seeker")
 
                         .requestMatchers(
                                 HttpMethod.PUT,
@@ -151,6 +187,8 @@ public class SecurityConfig {
                                 HttpMethod.DELETE,
                                 "/application/**"
                         ).hasRole("job_seeker")
+
+
 
                         .anyRequest()
                         .authenticated()

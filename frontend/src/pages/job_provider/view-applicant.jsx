@@ -118,15 +118,15 @@ const ViewApplicants = () => {
                       </p>
 
                       {application.resume && (
-                        <a
-                          href={`http://localhost:8080/uploads/resumes/${application.resume}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-block mt-4 text-blue-600 hover:underline font-medium"
-                        >
-                          📄 View Resume
-                        </a>
-                      )}
+                      <a
+                        href={`http://localhost:8080/files/resumes/${application.resume}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-block mt-4 text-blue-600 hover:underline font-medium flex items-center gap-2"
+                      >
+                        📄 View/Download Resume
+                      </a>
+                    )}
                     </div>
 
                     <div className="text-right">

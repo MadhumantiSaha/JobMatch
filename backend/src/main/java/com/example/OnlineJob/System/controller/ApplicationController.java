@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ public class ApplicationController {
     // Apply to a job
     @PostMapping("/apply/{jobId}")
     public ResponseEntity<Map<String, Object>> applyToJob(
+            @RequestParam(value = "resumeFile", required = false) MultipartFile resumeFile,
             @PathVariable Long jobId,
             @RequestHeader("Authorization") String authHeader) {
 
@@ -37,7 +39,7 @@ public class ApplicationController {
             Long userId = jwtUtil.extractId(token);
 
             Application application =
-                    applicationServices.applyToJob(jobId, userId);
+                    applicationServices.applyToJob(jobId, userId, resumeFile);
 
             response.put("success", true);
             response.put("message",

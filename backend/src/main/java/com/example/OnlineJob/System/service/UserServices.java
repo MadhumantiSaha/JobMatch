@@ -32,44 +32,8 @@ public class UserServices {
     }
 
     private final String imageDir = "register/images/";
-//    private final String resumeDir = "register/resumes/";
-//    private final String companyDir = "register/company/";
 
-
- //    Create - with password encryption
-
-//    public User saveUser(User user, MultipartFile img) throws IOException {
-//
-//        Path path = Paths.get(imageDir);
-//
-//        if (!Files.exists(path)) {
-//            Files.createDirectories(path);
-//        }
-//
-//        if (img != null && !img.isEmpty()) {
-//            String fileName = img.getOriginalFilename();
-//
-//            Files.copy(
-//                    img.getInputStream(),
-//                    path.resolve(fileName),
-//                    StandardCopyOption.REPLACE_EXISTING
-//            );
-//
-//            user.setImage(fileName);
-//        }
-//
-//        // Encrypt password BEFORE saving
-//        if (user.getPassword() != null &&
-//                !user.getPassword().isEmpty()) {
-//
-//            user.setPassword(
-//                    passwordEncoder.encode(user.getPassword())
-//            );
-//        }
-//
-//        return userRepository.save(user);
-//    }
-
+//    Save user details
     public User saveUser(User user, MultipartFile img) throws IOException {
         if (img != null && !img.isEmpty()) {
             String imageFileName = saveFile(img, UPLOAD_DIR + "images/");
@@ -91,15 +55,6 @@ public class UserServices {
     public Optional<User> getUserById(Long id){
         return userRepository.findById(id);
     }
-
-//    READ BY ID - Login
-//    public Optional<User> findUserByEmail(String email){
-//        return userRepository.findUserByEmail(email);
-//    }
-//
-//    public User save(User user) {
-//        return userRepository.save(user);
-//    }
 
     public Optional<User> findUserByEmail(String email){
         return userRepository.findUserByEmail(email);
