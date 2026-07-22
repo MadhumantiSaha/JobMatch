@@ -6,6 +6,7 @@ import com.example.OnlineJob.System.model.User;
 import com.example.OnlineJob.System.service.JobServices;
 import com.example.OnlineJob.System.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -70,34 +71,62 @@ public class JobController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    // FILTER JOBS
-    @GetMapping("/filtered")
-    public ResponseEntity<Map<String, Object>> getAllFilteredJobs(){
-        Map<String, Object> response = new HashMap<>();
 
-    }
-    // READ ALL
-    @GetMapping
-    public ResponseEntity<Map<String, Object>> getAllJobs() {
+    // FILTER JOBS
+    @GetMapping("/search")
+    public ResponseEntity<Map<String, Object>> searchJobs(String keyword){
 
         Map<String, Object> response = new HashMap<>();
 
         try {
-            List<Job> jobs = jobServices.getAllJobs();
+            List<Job> jobs = jobServices.searchJobs(keyword);
 
             response.put("success", true);
             response.put("data", jobs);
 
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-
             response.put("success", false);
-            response.put("error", e.getMessage());
+            response.put("message", e.getMessage());
 
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    // Pagination
+    @GetMapping
+    public ResponseEntity<Page<Job>> getJobs(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size) {
+
+        return ResponseEntity.ok(
+                jobServices.getJobs(page, size)
+        );
+    }
+
+    // READ ALL
+//    @GetMapping
+//    public ResponseEntity<Map<String, Object>> getAllJobs() {
+//
+//        Map<String, Object> response = new HashMap<>();
+//
+//        try {
+//            List<Job> jobs = jobServices.getAllJobs();
+//
+//            response.put("success", true);
+//            response.put("data", jobs);
+//
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+//
+//        } catch (Exception e) {
+//
+//            response.put("success", false);
+//            response.put("error", e.getMessage());
+//
+//            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
 // READ BY JOB ID
     @GetMapping("/{id}")

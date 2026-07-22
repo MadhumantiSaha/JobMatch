@@ -3,6 +3,9 @@ package com.example.OnlineJob.System.service;
 import com.example.OnlineJob.System.model.Job;
 import com.example.OnlineJob.System.model.User;
 import com.example.OnlineJob.System.repository.JobRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -69,12 +72,20 @@ public List<Job> getJobsByUserId(User user) {
     }
 
 //    Filter jobs
-    public List<Job> searchJobs(String java, String python, String SAP) {
-        return jobRepository
-                .findByfiltering(
-                        java,
-                        python,
-                        SAP
-                );
+//    public List<Job> searchJobs(String Bangalore) {
+//        return jobRepository
+//                .findByPostNameContainingIgnoreCaseOrLocationContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+//                        Bangalore
+//                );
+//    }
+    public List<Job> searchJobs(String keyword) {
+        return jobRepository.searchJobs(keyword);
+    }
+
+//    Pagination
+    public Page<Job> getJobs(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        return jobRepository.findAll(pageable);
     }
 }

@@ -28,34 +28,7 @@ public class SecurityConfig {
     @Autowired
     private CustomAccessDeniedHandler accessDeniedHandler;
 
-//    @Bean
-//    public WebMvcConfigurer webMvcConfigurer() {
-//        System.out.println("Working Directory: " + System.getProperty("user.dir"));
-//
-//        return new WebMvcConfigurer() {
-//            @Override
-//            public void addResourceHandlers(ResourceHandlerRegistry registry) {
-//                registry.addResourceHandler("/uploads/**")
-//                        .addResourceLocations("file:uploads/");
-//
-//                // For resumes saved in applications/resumes/
-//                registry.addResourceHandler("/files/resumes/**")
-////                        .addResourceLocations("file:uploads/resumes/");
-//                        .addResourceLocations("file:" + System.getProperty("user.dir") + "/uploads/resumes/");
-//
-//                // For user uploaded resumes (if any)
-//                registry.addResourceHandler("/uploads/resumes/**")
-//                        .addResourceLocations("file:uploads/resumes/");
-//
-//                // For images
-//                registry.addResourceHandler("/uploads/images/**")
-//                        .addResourceLocations("file:register/images/");
-//
-//                registry.addResourceHandler("/uploads/**")
-//                        .addResourceLocations("file:uploads/");
-//            }
-//        };
-//    }
+
     @Bean
     public WebMvcConfigurer webMvcConfigurer() {
         return new WebMvcConfigurer() {
@@ -142,6 +115,10 @@ public class SecurityConfig {
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/files/**"
+                        ).permitAll()
+
+                        .requestMatchers(
+                                "/job/search"
                         ).permitAll()
 
                         .requestMatchers(
