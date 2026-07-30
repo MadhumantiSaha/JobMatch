@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../App.css";
+import "../../App.css";
 import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -51,7 +51,12 @@ const Login = () => {
         );
 
         alert("Login Successful!");
-        navigate("/dashboard");
+        if(result.data.role === "job_seeker"){
+          navigate("/jobs");
+        }else{
+          navigate("/my-jobs");
+        }
+        
       } else {
         alert(result.Error || result.message || "Invalid credentials");
       }

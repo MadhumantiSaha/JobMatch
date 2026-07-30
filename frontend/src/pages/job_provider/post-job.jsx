@@ -11,9 +11,11 @@ const PostJob = () => {
     salary: "",
     experience: "",
     jobType: "",
-    skills: "",
     description: "",
   });
+
+  const [skills, setSkills] = useState([]);     // Skills as array
+  const [newSkill, setNewSkill] = useState(""); // Input for adding skill
 
   const handleChange = (e) => {
     setJob({
@@ -22,16 +24,41 @@ const PostJob = () => {
     });
   };
 
+  // Add skill
+  const handleAddSkill = () => {
+    const skill = newSkill.trim();
+    if (skill && !skills.includes(skill)) {
+      setSkills([...skills, skill]);
+      setNewSkill("");
+    }
+  };
+
+  // Remove skill
+  const handleRemoveSkill = (skillToRemove) => {
+    setSkills(skills.filter((s) => s !== skillToRemove));
+  };
+
   const postJob = async (e) => {
     e.preventDefault();
 
+    if (skills.length === 0) {
+      alert("Please add at least one skill");
+      return;
+    }
+
     try {
+      const payload = {
+        ...job,
+        skills: skills, // Send as array → Spring will convert to Set
+      };
+
       const response = await axios.post(
         "http://localhost:8080/job/jobpost",
-        job,
+        payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         }
       );
@@ -39,15 +66,17 @@ const PostJob = () => {
       console.log(response.data);
       alert("Job Posted Successfully!");
 
+      // Reset form
       setJob({
         postName: "",
         location: "",
         salary: "",
         experience: "",
         jobType: "",
-        skills: "",
         description: "",
       });
+      setSkills([]);
+      setNewSkill("");
     } catch (err) {
       console.error(err.response?.data || err);
       alert(err.response?.data?.error || "Unable to post job");
@@ -62,12 +91,20 @@ const PostJob = () => {
         <h1>Post a Job</h1>
 
         <form onSubmit={postJob}>
-
           <input
             type="text"
             name="postName"
             placeholder="Job Title"
             value={job.postName}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="text"
+            name="company"
+            placeholder="Company"
+            value={job.company}
             onChange={handleChange}
             required
           />
@@ -93,20 +130,82 @@ const PostJob = () => {
           <input
             type="text"
             name="experience"
-            placeholder="Experience"
+            placeholder="Experience (e.g. 2-4 years)"
             value={job.experience}
             onChange={handleChange}
             required
           />
 
-          <input
-            type="text"
-            name="skills"
-            placeholder="Skills (Java, React, SQL)"
-            value={job.skills}
-            onChange={handleChange}
-            required
-          />
+          {/* ========== Skills Section ========== */}
+          <div style={{ marginBottom: "15px" }}>
+            <label style={{ display: "block", marginBottom: "6px", fontWeight: "500" }}>
+              Required Skills
+            </label>
+
+            {/* Skills chips */}
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "8px",
+                marginBottom: "10px",
+              }}
+            >
+              {skills.map((skill) => (
+                <span
+                  key={skill}
+                  style={{
+                    background: "#e8f0fe",
+                    color: "#1a73e8",
+                    padding: "6px 12px",
+                    borderRadius: "20px",
+                    fontSize: "14px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                  }}
+                >
+                  {skill}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveSkill(skill)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#d93025",
+                      cursor: "pointer",
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      lineHeight: 1,
+                    }}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+
+            {/* Add skill input */}
+            <div style={{ display: "flex", gap: "8px" }}>
+              <input
+                type="text"
+                placeholder="Add a skill (e.g. Java)"
+                value={newSkill}
+                onChange={(e) => setNewSkill(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddSkill();
+                  }
+                }}
+                style={{ flex: 1 }}
+              />
+              <button type="button" onClick={handleAddSkill}>
+                Add
+              </button>
+            </div>
+          </div>
+          {/* ==================================== */}
 
           <select
             name="jobType"
@@ -130,10 +229,7 @@ const PostJob = () => {
             required
           />
 
-          <button type="submit">
-            Post Job
-          </button>
-
+          <button type="submit">Post Job</button>
         </form>
       </div>
     </>

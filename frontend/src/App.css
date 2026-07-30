@@ -313,3 +313,67 @@ body {
     width: 100%;
   }
 }
+
+.premium-container {
+  padding: 40px;
+  text-align: center;
+}
+
+.plans-grid {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.plan-card {
+  border: 3px solid;
+  border-radius: 15px;
+  padding: 30px;
+  width: 280px;
+  background: white;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.price {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+.buy-btn {
+  margin-top: 20px;
+  padding: 12px 30px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.message {
+  padding: 15px;
+  background: #d4edda;
+  color: #155724;
+  border-radius: 8px;
+  margin: 20px auto;
+  max-width: 500px;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.plan-badge {
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}

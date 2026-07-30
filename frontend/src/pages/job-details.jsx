@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../components/navbar";
+import "../App.css";
 
 const JobDetails = () => {
   const { id } = useParams();

@@ -1,12 +1,11 @@
 import { Routes, Route } from "react-router-dom";
 
-import Login from "../pages/login";
-import Register from "../pages/register";
-import ForgetPassword from "../pages/forget-Password";
-import VerifyOtp from "../pages/verify-otp";
-import ResetPassword from "../pages/reset-password";
+import Login from "../pages/auth/login";
+import Register from "../pages/auth/register";
+import ForgetPassword from "../pages/auth/forget-Password";
+import VerifyOtp from "../pages/auth/verify-otp";
+import ResetPassword from "../pages/auth/reset-password";
 import ProtectedRoute from "../components/protectedRoute";
-import Dashboard from "../pages/dashboard";
 import Profile from "../pages/profile";
 import UpdateProfile from "../pages/update-profile";
 import AppliedJobs from "../pages/job_seeker/applied-jobs";
@@ -15,6 +14,7 @@ import MyJobs from "../pages/job_provider/my-jobs";
 import JobDetails from "../pages/job-details";
 import ViewApplicant from "../pages/job_provider/view-applicant";
 import Jobs from "../pages/job_seeker/jobs";
+import PremiumPlans from "../pages/job_seeker/premium-plans";
 
 
 
@@ -30,7 +30,7 @@ function AppRoutes() {
       <Route path="/reset-password" element={<ResetPassword />} />
 
       {/* Protected Routes */}
-      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+      {/* <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} /> */}
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route
         path="/update-profile"
@@ -44,6 +44,7 @@ function AppRoutes() {
       <Route path="/post-job" element={<ProtectedRoute><PostJob /></ProtectedRoute>} />
       <Route path="/my-jobs" element={<ProtectedRoute><MyJobs /></ProtectedRoute>} />
       <Route path="jobs" element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
+      <Route path="/premium" element={<PremiumPlans />} />
       
       <Route  
         path="/view-applicant/:jobId"

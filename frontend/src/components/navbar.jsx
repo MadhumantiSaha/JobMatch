@@ -1,33 +1,59 @@
 import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import logo from "../assets/1.png";
 
 const Navbar = () => {
   const role = localStorage.getItem("role");
   const location = useLocation();
+  const [currentPlan, setCurrentPlan] = useState(null);
+
+  // Fetch current premium plan
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const fetchPlan = async () => {
+      try {
+        const res = await axios.get("http://localhost:8080/premium/my-membership", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (res.data && res.data.membershipStatus === "ACTIVE") {
+          setCurrentPlan("PREMIUM");
+        } else {
+          setCurrentPlan(null);
+        }
+      } catch (err) {
+        setCurrentPlan(null);
+      }
+    };
+
+    fetchPlan();
+  }, [location.pathname]); // Refresh when route changes (after upgrade)
 
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     localStorage.removeItem("user");
-
     window.location.href = "/login";
   };
 
+
   return (
     <nav className="navbar">
-
       <div className="logo">
-        <h2>Online Job Portal</h2>
+        <img src={logo} alt="JobMatch Logo" className="logo-img" />
       </div>
 
       <div className="nav-links">
-
         {/* Common */}
-        <Link
+        {/* <Link
           className={location.pathname === "/dashboard" ? "active" : ""}
           to="/dashboard"
         >
-          🏠 Dashboard
-        </Link>
+          💼 Job
+        </Link> */}
 
         {/* Job Seeker */}
         {role === "job_seeker" && (
@@ -45,6 +71,13 @@ const Navbar = () => {
             >
               📝 Applied Jobs
             </Link>
+
+            <Link
+              className={location.pathname === "/premium" ? "active" : ""}
+              to="/premium"
+            >
+              ⭐ Upgrade
+            </Link>
           </>
         )}
 
@@ -52,35 +85,46 @@ const Navbar = () => {
         {role === "job_provider" && (
           <>
             <Link
-              className={location.pathname === "/post-job" ? "active" : ""}
-              to="/post-job"
-            >
-              ➕ Post Job
-            </Link>
-
-            <Link
               className={location.pathname === "/my-jobs" ? "active" : ""}
               to="/my-jobs"
             >
               📋 My Jobs
             </Link>
+
+            <Link
+              className={location.pathname === "/post-job" ? "active" : ""}
+              to="/post-job"
+            >
+              ➕ Post Job
+            </Link>
+            
           </>
         )}
 
-        {/* Common */}
+        {/* Profile */}
         <Link
           className={location.pathname === "/profile" ? "active" : ""}
           to="/profile"
         >
           👤 Profile
         </Link>
-
       </div>
 
-      <button className="logout-btn" onClick={logout}>
-        Logout
-      </button>
+      {/* ========== PLAN BADGE ========== */}
+      <div className="nav-right">
+        {currentPlan && (
+          <span
+            className="plan-badge"
+            style={{ backgroundColor: "#4f46e5" }}
+          >
+            ⭐ PREMIUM
+          </span>
+        )}
 
+        <button className="logout-btn" onClick={logout}>
+          Logout
+        </button>
+      </div>
     </nav>
   );
 };
