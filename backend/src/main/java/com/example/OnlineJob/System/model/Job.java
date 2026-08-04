@@ -1,11 +1,16 @@
 package com.example.OnlineJob.System.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -17,28 +22,30 @@ public class Job {
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    @JsonIgnore
+    @JsonIgnoreProperties({"password", "otp", "otpExpiry", "applications"})
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private User userID;
-
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "user_name", referencedColumnName = "name", nullable = false)
-    @JsonIgnore
-//    @ToString.Exclude
-//    @EqualsAndHashCode.Exclude
-    private User userName;
+    private User recruiter;
 
     private String postName;
+
+    private String Company;
 
     private String description;
 
     @Temporal(TemporalType.DATE)
     private Date start_date;
 
+    @CreationTimestamp
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
     private Long salary;
 
-    private String skills;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "job_skills", joinColumns = @JoinColumn(name = "job_id"))
+    @Column(name = "skill")
+    private Set<String> skills = new HashSet<>();
 
     private String location;
 
@@ -66,14 +73,6 @@ public class Job {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public User getUserID() {
-        return userID;
-    }
-
-    public void setUserID(User userID) {
-        this.userID = userID;
     }
 
     public String getPostName() {
@@ -108,11 +107,11 @@ public class Job {
         this.salary = salary;
     }
 
-    public String getSkills() {
+    public Set<String> getSkills() {
         return skills;
     }
 
-    public void setSkills(String skills) {
+    public void setSkills(Set<String> skills) {
         this.skills = skills;
     }
 
@@ -148,11 +147,27 @@ public class Job {
         this.applications = applications;
     }
 
-    public User getUserName() {
-        return userName;
+    public String getCompany() {
+        return Company;
     }
 
-    public void setUserName(User userName) {
-        this.userName = userName;
+    public void setCompany(String company) {
+        Company = company;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public User getRecruiter() {
+        return recruiter;
+    }
+
+    public void setRecruiter(User recruiter) {
+        this.recruiter = recruiter;
     }
 }

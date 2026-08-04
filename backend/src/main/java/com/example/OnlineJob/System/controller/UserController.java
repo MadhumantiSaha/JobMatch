@@ -2,6 +2,7 @@ package com.example.OnlineJob.System.controller;
 
 import com.example.OnlineJob.System.dtos.OTPRequest;
 import com.example.OnlineJob.System.dtos.ResetPasswordRequest;
+import com.example.OnlineJob.System.dtos.UpdateUserRequest;
 import com.example.OnlineJob.System.model.User;
 import com.example.OnlineJob.System.service.EmailService;
 import com.example.OnlineJob.System.service.UserServices;
@@ -334,26 +335,26 @@ public class UserController {
 
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateUser(
-            @ModelAttribute User user,
-            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,           // Changed
-            @RequestParam(value = "resumeFile", required = false) MultipartFile resumeFile,       // Changed
-            @RequestParam(value = "companyFile", required = false) MultipartFile companyFile,     // Changed
-            @RequestHeader("Authorization") String authHeader) throws IOException {
+            @ModelAttribute UpdateUserRequest request,          // ← DTO instead of User
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+            @RequestParam(value = "resumeFile", required = false) MultipartFile resumeFile,
+            @RequestParam(value = "companyFile", required = false) MultipartFile companyFile,
+            @RequestHeader("Authorization") String authHeader) {
 
         Map<String, Object> response = new HashMap<>();
 
         try {
             String token = authHeader.substring(7);
             Long userId = jwtUtil.extractId(token);
-            user.setId(userId);
 
             User updatedUser = userServices.updateUser(
-                    user, imageFile, resumeFile, companyFile
+                    userId, request, imageFile, resumeFile, companyFile
             );
 
+            // Never return the full entity with password
             response.put("success", true);
             response.put("message", "Profile updated successfully");
-            response.put("data", updatedUser);   // Return updated user
+            response.put("data", updatedUser);
 
             return ResponseEntity.ok(response);
 

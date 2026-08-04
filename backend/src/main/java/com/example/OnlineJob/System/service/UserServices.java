@@ -1,5 +1,6 @@
 package com.example.OnlineJob.System.service;
 
+import com.example.OnlineJob.System.dtos.UpdateUserRequest;
 import com.example.OnlineJob.System.model.User;
 import com.example.OnlineJob.System.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServices {
@@ -82,21 +85,40 @@ public class UserServices {
 
 
     // Update method in UserServices.java
-    public User updateUser(User updateUser,
+    public User updateUser(Long userId,
+                           UpdateUserRequest request,
                            MultipartFile image,
                            MultipartFile resume,
                            MultipartFile companyDetails) throws IOException{
 
-        User user = userRepository.findById(updateUser.getId())
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Update basic fields
-        if (updateUser.getName() != null) user.setName(updateUser.getName());
-        if (updateUser.getContact() != null) user.setContact(updateUser.getContact());
-        if (updateUser.getEmail() != null) user.setEmail(updateUser.getEmail());
+        // Basic fields
+        if (request.getName() != null) user.setName(request.getName());
+        if (request.getContact() != null) user.setContact(request.getContact());
+        if (request.getEmail() != null) user.setEmail(request.getEmail());
 
-        if (updateUser.getPassword() != null && !updateUser.getPassword().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(updateUser.getPassword()));
+        // Password (only if provided)
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        if (request.getSkills() != null) {
+            // Optional: normalize (lowercase, trim, remove empty)
+            Set<String> cleanedSkills = request.getSkills().stream()
+                    .filter(s -> s != null && !s.isBlank())
+                    .map(String::trim)
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toSet());
+            user.setSkills(cleanedSkills);
+        }
+
+        if (request.getExperienceYears() != null) {
+            if (request.getExperienceYears() < 0 || request.getExperienceYears() > 50) {
+                throw new IllegalArgumentException("Experience years must be between 0 and 50");
+            }
+            user.setExperienceYears(request.getExperienceYears());
         }
 
         // File updates with consistent paths
@@ -120,68 +142,6 @@ public class UserServices {
 
         return userRepository.save(user);
     }
-//    Update
-//    public User updateUser(
-//            User updateUser,
-//            MultipartFile image,
-//            MultipartFile resume,
-//            MultipartFile companyDetails) throws IOException {
-//
-//        User user = userRepository.findById(updateUser.getId())
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        // Update other fields
-//        if (updateUser.getName() != null) {
-//            user.setName(updateUser.getName());
-//        }
-//        if (updateUser.getContact() != null) {
-//            user.setContact(updateUser.getContact());
-//        }
-//        if (updateUser.getEmail() != null) {
-//            user.setEmail(updateUser.getEmail());
-//        }
-//        if (updateUser.getPassword() != null &&
-//                !updateUser.getPassword().isEmpty()) {
-//            user.setPassword(
-//                    passwordEncoder.encode(updateUser.getPassword())
-//            );
-//        }
-//        // Update image
-//        if (image != null && !image.isEmpty()) {
-//            // save image
-//            user.setImage(saveFile(image, "/update"));
-//        }
-//        // Role-based updates
-//        if (user.getRole() == User.Role.job_seeker) {
-//
-//            if (resume != null && !resume.isEmpty()) {
-//                user.setResume(
-//                        saveFile(resume, "uploads/resumes")
-//                );
-//            }
-//            // Prevent job seekers from updating company details
-//            if (companyDetails != null && !companyDetails.isEmpty()) {
-//                throw new RuntimeException(
-//                        "Job seekers cannot upload company details."
-//                );
-//            }
-//        }
-//        if (user.getRole() == User.Role.job_provider) {
-//            if (companyDetails != null && !companyDetails.isEmpty()) {
-//                user.setCompanyDetails(
-//                        saveFile(companyDetails,
-//                                "uploads/companyDetails")
-//                );
-//            }
-//            // Prevent job providers from uploading resumes
-//            if (resume != null && !resume.isEmpty()) {
-//                throw new RuntimeException(
-//                        "Job providers cannot upload resumes."
-//                );
-//            }
-//        }
-//        return userRepository.save(user);
-//    }
 
 
 //    DELETE

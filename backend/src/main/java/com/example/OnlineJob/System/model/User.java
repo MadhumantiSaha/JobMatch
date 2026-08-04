@@ -5,7 +5,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -47,6 +50,18 @@ public class User {
    private String otp;
 
    private LocalDateTime otpExpiry;
+
+   @ElementCollection(fetch = FetchType.EAGER)
+   @CollectionTable(name = "user_skills", joinColumns = @JoinColumn(name = "user_id"))
+   @Column(name = "skill")
+   private Set<String> skills = new HashSet<>();
+
+   private Integer experienceYears;
+
+   private boolean isPremium = false;
+
+   private LocalDateTime premiumExpiry;
+
 
    public Long getId() {
       return id;
@@ -142,5 +157,37 @@ public class User {
 
    public void setApplications(List<Application> applications) {
       this.applications = applications;
+   }
+
+   public Integer getExperienceYears() {
+      return experienceYears;
+   }
+
+   public void setExperienceYears(Integer experienceYears) {
+      this.experienceYears = experienceYears;
+   }
+
+   public boolean isPremium() {
+      return isPremium;
+   }
+
+   public void setPremium(boolean premium) {
+      isPremium = premium;
+   }
+
+   public LocalDateTime getPremiumExpiry() {
+      return premiumExpiry;
+   }
+
+   public void setPremiumExpiry(LocalDateTime premiumExpiry) {
+      this.premiumExpiry = premiumExpiry;
+   }
+
+   public Set<String> getSkills() {
+      return skills;
+   }
+
+   public void setSkills(Set<String> skills) {
+      this.skills = skills;
    }
 }

@@ -165,6 +165,19 @@ public class SecurityConfig {
                                 "/application/**"
                         ).hasRole("job_seeker")
 
+                        .requestMatchers(
+                                "/premium/**"
+                        ).authenticated()
+
+                        .requestMatchers(
+                                "/test"
+                        ).authenticated()
+
+                        .requestMatchers(
+                                "/messages/**"
+                        ).authenticated()
+
+                        .requestMatchers("/ws/**").permitAll()
 
 
                         .anyRequest()

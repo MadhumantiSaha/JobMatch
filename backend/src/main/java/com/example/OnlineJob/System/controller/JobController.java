@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -39,16 +38,13 @@ public class JobController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            // Remove "Bearer " prefix
             String token = authHeader.substring(7);
 
-            // Extract user ID from JWT
             Long userId = jwtUtil.extractId(token);
 
-            // Set user ID in Job
             User u = new User();
             u.setId(userId);
-            job.setUserID(u);
+            job.setRecruiter(u);
 
             jobServices.addJob(job);
 
@@ -105,30 +101,7 @@ public class JobController {
         );
     }
 
-    // READ ALL
-//    @GetMapping
-//    public ResponseEntity<Map<String, Object>> getAllJobs() {
-//
-//        Map<String, Object> response = new HashMap<>();
-//
-//        try {
-//            List<Job> jobs = jobServices.getAllJobs();
-//
-//            response.put("success", true);
-//            response.put("data", jobs);
-//
-//            return new ResponseEntity<>(response, HttpStatus.OK);
-//
-//        } catch (Exception e) {
-//
-//            response.put("success", false);
-//            response.put("error", e.getMessage());
-//
-//            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-
-// READ BY JOB ID
+    // READ BY JOB ID
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getJobById(@PathVariable Long id) {
 
@@ -150,7 +123,7 @@ public class JobController {
         }
     }
 
-//  READ BY USER ID
+    //  READ BY USER ID
     @GetMapping("/my-jobs")
     public ResponseEntity<?> getMyJobs( @RequestHeader("Authorization") String authHeader) {
 
