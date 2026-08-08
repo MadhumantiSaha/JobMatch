@@ -1,5 +1,6 @@
 package com.example.OnlineJob.System.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,24 +14,19 @@ public class Conversation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "application_id", unique = true)
-//    private Application application;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "job_seeker_id")
+    @JsonIgnoreProperties({"password", "otp", "otpExpiry", "applications", "resume", "image", "skills"})
     private User jobSeeker;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "job_provider_id")
+    @JsonIgnoreProperties({"password", "otp", "otpExpiry", "applications", "resume", "image", "skills"})
     private User jobProvider;
 
     private boolean activated;
 
-//    @Column(length = 500)
-//    private String lastMessage;
-//
-//    private LocalDateTime lastMessageTime;
 
     @Enumerated(EnumType.STRING)
     private Initiator initiatedBy;

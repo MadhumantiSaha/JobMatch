@@ -29,6 +29,9 @@ public class UserServices {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ResumeParserService resumeParserService;
+
 //    Constructer Injection
     public UserServices(){
         this.passwordEncoder = new BCryptPasswordEncoder(12);
@@ -89,23 +92,22 @@ public class UserServices {
                            UpdateUserRequest request,
                            MultipartFile image,
                            MultipartFile resume,
-                           MultipartFile companyDetails) throws IOException{
+                           MultipartFile companyDetails) throws IOException {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Basic fields
+        // Basic fields (same as before)
         if (request.getName() != null) user.setName(request.getName());
         if (request.getContact() != null) user.setContact(request.getContact());
         if (request.getEmail() != null) user.setEmail(request.getEmail());
 
-        // Password (only if provided)
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
+        // Manual skills still supported (optional)
         if (request.getSkills() != null) {
-            // Optional: normalize (lowercase, trim, remove empty)
             Set<String> cleanedSkills = request.getSkills().stream()
                     .filter(s -> s != null && !s.isBlank())
                     .map(String::trim)
@@ -121,16 +123,28 @@ public class UserServices {
             user.setExperienceYears(request.getExperienceYears());
         }
 
-        // File updates with consistent paths
+        // Image
         if (image != null && !image.isEmpty()) {
             String imageFileName = saveFile(image, UPLOAD_DIR + "images/");
             user.setImage(imageFileName);
         }
 
+        // ===== RESUME + AUTO SKILL EXTRACTION =====
         if (user.getRole() == User.Role.job_seeker) {
             if (resume != null && !resume.isEmpty()) {
+                // 1. Save the file
                 String resumeFileName = saveFile(resume, UPLOAD_DIR + "resumes/");
                 user.setResume(resumeFileName);
+
+                // 2. Extract skills automatically and store them
+                try {
+                    Set<String> extractedSkills = resumeParserService.extractSkills(resume);
+                    user.setSkills(extractedSkills);   // ← overwrites / sets skills
+                    System.out.println("Extracted skills: " + extractedSkills);
+                } catch (Exception e) {
+                    // Don't fail the whole update if AI fails
+                    System.err.println("Skill extraction failed: " + e.getMessage());
+                }
             }
         }
         else if (user.getRole() == User.Role.job_provider) {

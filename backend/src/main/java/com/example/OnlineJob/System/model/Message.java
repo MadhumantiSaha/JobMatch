@@ -14,14 +14,17 @@ public class Message {
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "conversation_id")
+        @JsonIgnoreProperties({"jobSeeker", "jobProvider"})
         private Conversation conversation;
 
-        @ManyToOne(fetch = FetchType.LAZY)
+        @ManyToOne(fetch = FetchType.EAGER)
         @JoinColumn(name = "sender_id")
+        @JsonIgnoreProperties({"password", "otp", "otpExpiry", "applications", "resume", "image", "skills"})
         private User sender;
 
-        @ManyToOne(fetch = FetchType.LAZY)
+        @ManyToOne(fetch = FetchType.EAGER)
         @JoinColumn(name = "receiver_id")
+        @JsonIgnoreProperties({"password", "otp", "otpExpiry", "applications", "resume", "image", "skills"})
         private User receiver;
 
         @Column(nullable = false, length = 2000)

@@ -15,6 +15,7 @@ import JobDetails from "../pages/job-details";
 import ViewApplicant from "../pages/job_provider/view-applicant";
 import Jobs from "../pages/job_seeker/jobs";
 import PremiumPlans from "../pages/job_seeker/premium-plans";
+import Messages from "../pages/messages";
 
 
 
@@ -45,21 +46,11 @@ function AppRoutes() {
       <Route path="/my-jobs" element={<ProtectedRoute><MyJobs /></ProtectedRoute>} />
       <Route path="jobs" element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
       <Route path="/premium" element={<PremiumPlans />} />
+
+      <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>}/>
       
-      <Route  
-        path="/view-applicant/:jobId"
-        element={
-          <ProtectedRoute>
-            <ViewApplicant />
-          </ProtectedRoute>
-        } />
-      <Route  
-        path="/view-applicants/:jobId"
-        element={
-          <ProtectedRoute>
-            <ViewApplicant />
-          </ProtectedRoute>
-        } />
+      <Route path="/view-applicant/:jobId" element={<ProtectedRoute><ViewApplicant /></ProtectedRoute> } />
+      <Route path="/view-applicants/:jobId" element={<ProtectedRoute><ViewApplicant /></ProtectedRoute>} />
     </Routes>
   );
 }

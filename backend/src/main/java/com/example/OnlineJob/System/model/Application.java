@@ -1,6 +1,7 @@
 package com.example.OnlineJob.System.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -47,6 +48,12 @@ public class Application{
         HIRED
     }
 
+
+
+    @JsonProperty("jobSeekerId")
+    public Long getJobSeekerId() {
+        return jobSeeker != null ? jobSeeker.getId() : null;
+    }
 
     public Long getId() {
         return id;

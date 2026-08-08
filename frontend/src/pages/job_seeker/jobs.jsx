@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/navbar";
 import "../../App.css";
 
-const Dashboard = () => {
+const JobSeekerDashboard = () => {
   const navigate = useNavigate();
   const role = localStorage.getItem("role");
 
@@ -279,4 +279,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default JobSeekerDashboard;

@@ -1,8 +1,18 @@
 import { useNavigate } from "react-router-dom";
+import { startConversation } from "../services/chatApi";
 
 function JobCard({ job }) {
 
     const navigate = useNavigate();
+
+    async function handleMessageClick(otherUserId) {
+        try {
+            const conversation = await startConversation(otherUserId);
+            navigate("/chat", { state: { conversation } }); // or however you route
+        } catch (err) {
+            alert(err.response?.data?.error || "Unable to start conversation");
+        }
+    }
 
     return (
         <div className="job-card">

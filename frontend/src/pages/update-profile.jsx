@@ -84,7 +84,6 @@ const UpdateProfile = () => {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
-          // Do NOT set Content-Type → browser will set multipart/form-data automatically
         },
         body: formDataToSend,
       });
@@ -92,10 +91,21 @@ const UpdateProfile = () => {
       const data = await res.json();
 
       if (res.ok) {
-        // Update localStorage with new data
+        // Update localStorage with the latest data (including AI skills)
         localStorage.setItem("user", JSON.stringify(data.data));
-        setMessage("Profile updated successfully!");
-        setTimeout(() => navigate("/profile"), 1500);
+
+        // Update the skills shown on the form immediately
+        if (data.data.skills) {
+          setSkills([...data.data.skills]);
+        }
+
+        if (resumeFile) {
+          setMessage("Profile updated! Skills were automatically extracted from your resume.");
+        } else {
+          setMessage("Profile updated successfully!");
+        }
+
+        setTimeout(() => navigate("/profile"), 1800);
       } else {
         setMessage(data.message || "Update failed");
       }
@@ -107,9 +117,6 @@ const UpdateProfile = () => {
     }
   };
 
-  if (!user) {
-    return <div>Please login first</div>;
-  }
 
   return (
     <div className="register-container">
@@ -230,8 +237,15 @@ const UpdateProfile = () => {
           {/* Resume (only for job_seeker) */}
           {user.role === "job_seeker" && (
             <div className="input-group">
-              <label>Resume</label>
-              <input type="file" accept=".pdf,.doc,.docx" onChange={(e) => setResumeFile(e.target.files[0])} />
+              <label>Resume (PDF)</label>
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={(e) => setResumeFile(e.target.files[0])}
+              />
+              <small style={{ color: "#666", marginTop: "6px", display: "block" }}>
+                Upload your resume and skills will be extracted automatically using AI.
+              </small>
             </div>
           )}
 

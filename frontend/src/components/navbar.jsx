@@ -8,29 +8,28 @@ const Navbar = () => {
   const location = useLocation();
   const [currentPlan, setCurrentPlan] = useState(null);
 
-  // Fetch current premium plan
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
     const fetchPlan = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/premium/my-membership", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
+        const res = await axios.get(
+          "http://localhost:8080/premium/my-membership",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
         if (res.data && res.data.membershipStatus === "ACTIVE") {
           setCurrentPlan("PREMIUM");
         } else {
           setCurrentPlan(null);
         }
-      } catch (err) {
+      } catch {
         setCurrentPlan(null);
       }
     };
 
     fetchPlan();
-  }, [location.pathname]); // Refresh when route changes (after upgrade)
+  }, [location.pathname]);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -39,7 +38,6 @@ const Navbar = () => {
     window.location.href = "/login";
   };
 
-
   return (
     <nav className="navbar">
       <div className="logo">
@@ -47,15 +45,6 @@ const Navbar = () => {
       </div>
 
       <div className="nav-links">
-        {/* Common */}
-        {/* <Link
-          className={location.pathname === "/dashboard" ? "active" : ""}
-          to="/dashboard"
-        >
-          💼 Job
-        </Link> */}
-
-        {/* Job Seeker */}
         {role === "job_seeker" && (
           <>
             <Link
@@ -73,6 +62,15 @@ const Navbar = () => {
             </Link>
 
             <Link
+              className={
+                location.pathname.startsWith("/messages") ? "active" : ""
+              }
+              to="/messages"
+            >
+              💬 Messages
+            </Link>
+
+            <Link
               className={location.pathname === "/premium" ? "active" : ""}
               to="/premium"
             >
@@ -81,7 +79,6 @@ const Navbar = () => {
           </>
         )}
 
-        {/* Job Provider */}
         {role === "job_provider" && (
           <>
             <Link
@@ -97,11 +94,16 @@ const Navbar = () => {
             >
               ➕ Post Job
             </Link>
-            
+
+            <Link
+              className={location.pathname.startsWith("/messages") ? "active" : ""}
+              to="/messages"
+            >
+              💬 Messages
+            </Link>
           </>
         )}
 
-        {/* Profile */}
         <Link
           className={location.pathname === "/profile" ? "active" : ""}
           to="/profile"
@@ -110,13 +112,9 @@ const Navbar = () => {
         </Link>
       </div>
 
-      {/* ========== PLAN BADGE ========== */}
       <div className="nav-right">
         {currentPlan && (
-          <span
-            className="plan-badge"
-            style={{ backgroundColor: "#4f46e5" }}
-          >
+          <span className="plan-badge" style={{ backgroundColor: "#4f46e5" }}>
             ⭐ PREMIUM
           </span>
         )}

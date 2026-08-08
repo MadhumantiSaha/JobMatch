@@ -93,6 +93,42 @@ const Profile = () => {
       <div className="register-card">
         <h2>My Profile</h2>
 
+        {/* ========== Profile Image ========== */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "25px" }}>
+          {user?.image ? (
+            <img
+              src={`http://localhost:8080/files/images/${user.image}`}
+              alt="Profile"
+              style={{
+                width: "100px",
+                height: "100px",
+                borderRadius: "50%",
+                objectFit: "cover",
+                border: "3px solid #4f46e5",
+                boxShadow: "0 4px 10px rgba(0,0,0,0.15)"
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: "100px",
+                height: "100px",
+                borderRadius: "50%",
+                background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                color: "white",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "2rem",
+                fontWeight: "bold",
+                boxShadow: "0 4px 10px rgba(0,0,0,0.15)"
+              }}
+            >
+              {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+            </div>
+          )}
+        </div>
+
         {/* ========== Basic Info ========== */}
         <div className="input-group">
           <label>Name</label>
@@ -160,6 +196,35 @@ const Profile = () => {
             <p style={{ color: "#888", marginTop: "6px" }}>No skills added yet</p>
           )}
         </div>
+
+        {/* ========== Resume Section ========== */}
+        {user?.role === "job_seeker" && (
+          <div className="input-group">
+            <label>Resume</label>
+            {user?.resume ? (
+              <a
+                href={`http://localhost:8080/files/resumes/${user.resume}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="resume-link"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  color: "#4f46e5",
+                  fontWeight: "600",
+                  textDecoration: "none",
+                  marginTop: "6px",
+                  fontSize: "15px",
+                }}
+              >
+                📄 View / Download Resume
+              </a>
+            ) : (
+              <p style={{ color: "#888", marginTop: "6px", fontSize: "14px" }}>No resume uploaded yet</p>
+            )}
+          </div>
+        )}
 
         {/* ========== Premium Section ========== */}
         {user?.role === "job_seeker" && (

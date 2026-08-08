@@ -1,15 +1,20 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../../components/navbar";
 
 const AppliedJobs = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isPremium, setIsPremium] = useState(false);
+  const [messagingId, setMessagingId] = useState(null);
 
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchApplications();
+    checkPremium();
   }, []);
 
   const fetchApplications = async () => {
@@ -17,13 +22,9 @@ const AppliedJobs = () => {
       const res = await axios.get(
         "http://localhost:8080/application/my-applications",
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-
-      console.log("Applications:", res.data.data);
       setApplications(res.data.data || []);
     } catch (err) {
       console.error("Error fetching applications:", err);
@@ -33,95 +34,201 @@ const AppliedJobs = () => {
     }
   };
 
+  const checkPremium = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8080/premium/my-membership",
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setIsPremium(res.data?.membershipStatus === "ACTIVE");
+    } catch {
+      setIsPremium(false);
+    }
+  };
+
   const withdrawApplication = async (applicationId) => {
     if (!window.confirm("Are you sure you want to withdraw this application?")) {
       return;
     }
-
     try {
-      await axios.delete(
-        `http://localhost:8080/application/${applicationId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
+      await axios.delete(`http://localhost:8080/application/${applicationId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       alert("Application withdrawn successfully.");
-      fetchApplications(); // Refresh list
+      fetchApplications();
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.error || "Unable to withdraw application.");
     }
   };
 
-  const viewJobDetails = (jobId) => {
-    window.location.href = `/job/${jobId}`; // or use navigate if using useNavigate
+  const startMessageWithRecruiter = async (recruiterId) => {
+    if (!recruiterId) {
+      alert("Recruiter information is not available for this job.");
+      return;
+    }
+    setMessagingId(recruiterId);
+    try {
+      const res = await axios.post(
+        `http://localhost:8080/messages/start/${recruiterId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const conversation = res.data.data;
+      navigate(`/messages?conversationId=${conversation.id}`);
+    } catch (err) {
+      const status = err.response?.status;
+      const msg = err.response?.data?.error || "Unable to start conversation.";
+      if (status === 403) {
+        alert("Only Premium members can message recruiters. Upgrade to unlock direct chat.");
+        navigate("/premium");
+      } else {
+        alert(msg);
+      }
+    } finally {
+      setMessagingId(null);
+    }
   };
 
-  if (loading) return <h2>Loading your applications...</h2>;
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="applied-page">
+          <div className="applied-loading">Loading your applications...</div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
       <Navbar />
-
-      <div className="container mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-6">My Applied Jobs</h1>
+      <div className="applied-page">
+        <div className="applied-header">
+          <div>
+            <h1>My Applied Jobs</h1>
+            <p className="applied-subtitle">
+              Track applications and message recruiters
+              {isPremium ? " with Premium" : ""}
+            </p>
+          </div>
+          <div className="applied-count-badge">
+            {applications.length} Application{applications.length !== 1 ? "s" : ""}
+          </div>
+        </div>
 
         {applications.length === 0 ? (
-          <div className="text-center py-10 bg-gray-100 rounded-xl">
-            <p className="text-xl text-gray-600">You haven't applied to any jobs yet.</p>
+          <div className="applied-empty">
+            <div className="applied-empty-icon">📝</div>
+            <h3>No applications yet</h3>
+            <p>You haven't applied to any jobs. Browse openings and apply!</p>
+            <button className="btn-primary" onClick={() => navigate("/jobs")}>
+              Browse Jobs
+            </button>
           </div>
         ) : (
-          <div className="space-y-6">
-            {applications.map((application) => (
-              <div
-                key={application.id}
-                className="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition"
-              >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h2 className="text-2xl font-semibold">
-                      {application.job?.postName || "Job Title"}
-                    </h2>
-                    <p className="text-gray-600 mt-1">
-                      {application.job?.companyName}
-                    </p>
+          <div className="applied-grid">
+            {applications.map((application) => {
+              const job = application.job || {};
+              const recruiterId = job.recruiter?.id;
+              const company = job.company || job.Company || "Company";
 
-                    <div className="mt-3 space-y-1 text-sm text-gray-600">
-                      <p><strong>Job ID:</strong> {application.job?.id}</p>
-                      <p><strong>Location:</strong> {application.job?.location}</p>
-                      <p><strong>Salary:</strong> {application.job?.salary}</p>
-                      <p><strong>Applied On:</strong> {new Date(application.appliedAt).toLocaleDateString()}</p>
+              return (
+                <div key={application.id} className="applied-card">
+                  <div className="applied-card-top">
+                    <div className="applied-card-title-block">
+                      <h2>{job.postName || "Job Title"}</h2>
+                      <p className="applied-company">{company}</p>
                     </div>
-
-                    <p className="mt-3">
-                      <span className="font-medium">Status: </span>
-                      <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(application.status)}`}>
-                        {application.status}
-                      </span>
-                    </p>
+                    <span
+                      className={`status-pill ${getStatusClass(application.status)}`}
+                    >
+                      {application.status}
+                    </span>
                   </div>
 
-                  <div className="flex flex-col gap-3">
+                  <div className="applied-meta">
+                    <div className="meta-item">
+                      <span className="meta-label">Location</span>
+                      <span>{job.location || "—"}</span>
+                    </div>
+                    <div className="meta-item">
+                      <span className="meta-label">Salary</span>
+                      <span>
+                        {job.salary != null
+                          ? `₹${Number(job.salary).toLocaleString()}`
+                          : "—"}
+                      </span>
+                    </div>
+                    <div className="meta-item">
+                      <span className="meta-label">Applied</span>
+                      <span>
+                        {application.appliedAt
+                          ? new Date(application.appliedAt).toLocaleDateString()
+                          : "—"}
+                      </span>
+                    </div>
+                    {job.jobType && (
+                      <div className="meta-item">
+                        <span className="meta-label">Type</span>
+                        <span>{String(job.jobType).replace("_", " ")}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {job.skills && job.skills.length > 0 && (
+                    <div className="applied-skills">
+                      {(Array.isArray(job.skills)
+                        ? job.skills
+                        : Array.from(job.skills)
+                      )
+                        .slice(0, 6)
+                        .map((skill) => (
+                          <span key={skill} className="skill-chip">
+                            {skill}
+                          </span>
+                        ))}
+                    </div>
+                  )}
+
+                  <div className="applied-actions">
                     <button
-                      onClick={() => viewJobDetails(application.job?.id)}
-                      className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
+                      className="btn-secondary"
+                      onClick={() => navigate(`/job/${job.id}`)}
                     >
-                      View Job Details
+                      View Job
                     </button>
 
+                    {isPremium ? (
+                      <button
+                        className="btn-message"
+                        disabled={messagingId === recruiterId}
+                        onClick={() => startMessageWithRecruiter(recruiterId)}
+                      >
+                        {messagingId === recruiterId
+                          ? "Opening..."
+                          : "💬 Direct Message Recruiter"}
+                      </button>
+                    ) : (
+                      <button
+                        className="btn-upgrade"
+                        onClick={() => navigate("/premium")}
+                      >
+                        ⭐ Upgrade to Chat with Recruiter
+                      </button>
+                    )}
+
                     <button
+                      className="btn-danger-outline"
                       onClick={() => withdrawApplication(application.id)}
-                      className="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 transition"
                     >
-                      Withdraw Application
+                      Withdraw
                     </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
@@ -129,21 +236,20 @@ const AppliedJobs = () => {
   );
 };
 
-// Helper function for status colors
-const getStatusColor = (status) => {
+const getStatusClass = (status) => {
   switch (status) {
     case "PENDING":
-      return "bg-yellow-100 text-yellow-700";
+      return "status-pending";
     case "SHORTLISTED":
-      return "bg-blue-100 text-blue-700";
+      return "status-shortlisted";
     case "INTERVIEW":
-      return "bg-purple-100 text-purple-700";
+      return "status-interview";
     case "HIRED":
-      return "bg-green-100 text-green-700";
+      return "status-hired";
     case "REJECTED":
-      return "bg-red-100 text-red-700";
+      return "status-rejected";
     default:
-      return "bg-gray-100 text-gray-700";
+      return "status-default";
   }
 };
 
