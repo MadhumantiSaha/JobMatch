@@ -1,0 +1,175 @@
+/* ==========================================================
+   Buttons
+   Every <button> gets baseline styling from the bare `button`
+   selector, so pages that forgot a className (there were several)
+   still render as a real button instead of a browser default.
+   Add a variant class on top for color/intent.
+========================================================== */
+
+button {
+  font-family: inherit;
+  font-size: var(--font-sm);
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 12px 20px;
+  cursor: pointer;
+  background: var(--color-primary);
+  color: var(--text-on-brand);
+  transition: background var(--transition-fast), opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+button:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---- Named variants (used explicitly across the app) ---- */
+.btn-primary,
+.register-btn,
+.buy-btn {
+  background: var(--color-primary);
+  color: var(--text-on-brand);
+}
+
+.btn-primary:hover:not(:disabled),
+.register-btn:hover:not(:disabled),
+.buy-btn:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+}
+
+.btn-secondary {
+  background: var(--border-color);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--border-color-strong);
+}
+
+.btn-message {
+  background: var(--color-sky);
+  color: var(--text-on-brand);
+}
+
+.btn-message:hover:not(:disabled) {
+  background: var(--color-sky-dark);
+}
+
+.btn-upgrade {
+  background: var(--gradient-brand);
+  color: var(--text-on-brand);
+}
+
+.btn-upgrade:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+.btn-danger,
+.delete-btn {
+  background: var(--color-danger);
+  color: var(--text-on-brand);
+}
+
+.btn-danger:hover:not(:disabled),
+.delete-btn:hover:not(:disabled) {
+  background: var(--color-danger-dark);
+}
+
+.btn-danger-outline {
+  background: var(--surface);
+  color: var(--color-danger);
+  border: 1.5px solid #fecaca;
+}
+
+.btn-danger-outline:hover:not(:disabled) {
+  background: #fef2f2;
+}
+
+.edit-btn {
+  background: #2563eb;
+  color: var(--text-on-brand);
+}
+
+.edit-btn:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.apply-btn {
+  background: var(--color-success);
+  color: var(--text-on-brand);
+}
+
+.apply-btn:hover:not(:disabled) {
+  background: var(--color-success-dark);
+}
+
+.btn-send {
+  background: var(--color-primary);
+  color: var(--text-on-brand);
+  min-width: 90px;
+}
+
+.btn-send:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+}
+
+.btn-icon-refresh {
+  background: var(--border-color);
+  color: var(--text-secondary);
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon-refresh:hover:not(:disabled) {
+  background: var(--border-color-strong);
+}
+
+/* Small ghost "x" button used inside skill chips */
+.chip-remove {
+  background: none;
+  border: none;
+  color: inherit;
+  opacity: 0.6;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.chip-remove:hover:not(:disabled) {
+  opacity: 1;
+  background: none;
+}
+
+/* Row of action buttons (edit/delete/view etc.) */
+.btn-row {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-4);
+}
+
+.btn-row button {
+  flex: 1;
+  min-width: 120px;
+}
+
+/* Full-width button used stacked in cards/forms */
+.btn-block {
+  width: 100%;
+}

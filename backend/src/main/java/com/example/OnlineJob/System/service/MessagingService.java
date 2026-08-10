@@ -169,4 +169,17 @@ public class MessagingService {
         return conversation.getJobSeeker().getId().equals(userId)
                 || conversation.getJobProvider().getId().equals(userId);
     }
+
+    // Unread count for the current user
+    public long getUnreadCount(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return messageRepository.countByReceiverAndReadFalse(user);
+    }
+
+    // Mark all messages in a conversation as read for this user
+    @Transactional
+    public void markConversationAsRead(Long conversationId, Long userId) {
+        messageRepository.markAsRead(conversationId, userId);
+    }
 }

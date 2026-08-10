@@ -1,0 +1,61 @@
+/* ==========================================================
+   Badges / chips / status pills
+========================================================== */
+
+.skill-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  font-size: var(--font-xs);
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+}
+
+.skill-chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.count-badge {
+  background: var(--color-primary);
+  color: var(--text-on-brand);
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: var(--font-sm);
+  box-shadow: var(--shadow-brand);
+  white-space: nowrap;
+}
+
+.plan-badge {
+  color: var(--text-on-brand);
+  background: var(--color-primary) !important;
+  font-size: var(--font-xs);
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.status-pending { background: var(--color-warning-bg); color: var(--color-warning-text); }
+.status-shortlisted { background: var(--color-info-bg); color: var(--color-info-text); }
+.status-interview { background: var(--color-purple-bg); color: var(--color-purple-text); }
+.status-hired { background: var(--color-success-bg); color: var(--color-success-text); }
+.status-rejected { background: var(--color-danger-bg); color: var(--color-danger-text); }
+.status-default { background: var(--surface-soft); color: var(--text-muted); }

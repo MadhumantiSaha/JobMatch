@@ -1,0 +1,80 @@
+/* ==========================================================
+   Reset & base typography
+========================================================== */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background: var(--bg-app);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.25;
+}
+
+h1 { font-size: var(--font-2xl); }
+h2 { font-size: var(--font-lg); }
+h3 { font-size: var(--font-md); }
+
+p {
+  color: var(--text-secondary);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+ul {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Generic page container used by simple pages (job details, my-jobs, post-job) */
+.container {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-5) var(--space-12);
+}
+
+.container > h1 {
+  margin-bottom: var(--space-6);
+}
+
+/* Small helper for centered loading/empty text blocks */
+.state-message {
+  text-align: center;
+  color: var(--text-muted);
+  padding: var(--space-10) var(--space-4);
+  font-size: var(--font-md);
+}

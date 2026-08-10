@@ -27,15 +27,16 @@ function JobCard({ job }) {
 
             <p>{job.salary}</p>
 
-            <div className="skills">
+            <div className="job-card-skills">
 
                 {job.skills.map(skill => (
-                    <span key={skill}>{skill}</span>
+                    <span key={skill} className="skill-chip">{skill}</span>
                 ))}
 
             </div>
 
             <button
+                className="btn-primary"
                 onClick={() => navigate(`/jobs/${job.id}`)}
             >
                 View Details

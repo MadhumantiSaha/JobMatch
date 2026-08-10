@@ -1,0 +1,88 @@
+/* ==========================================================
+   Forms — base element styling is global on purpose:
+   several pages render bare <input>/<select>/<textarea> with
+   no wrapper class, so this is the safety net that keeps them
+   from falling back to browser defaults.
+========================================================== */
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: var(--font-sm);
+  color: var(--text-primary);
+  background: var(--surface);
+  border: 1px solid var(--border-color-strong);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  outline: none;
+  width: 100%;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 110px;
+  font-family: var(--font-sans);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-faint);
+}
+
+input[readonly] {
+  background: var(--surface-soft);
+  color: var(--text-secondary);
+  cursor: default;
+}
+
+input[type="file"] {
+  padding: 8px;
+  background: var(--surface-soft);
+  cursor: pointer;
+}
+
+label {
+  display: block;
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+/* Standalone bare forms (forgot/reset/verify-otp pages) that don't
+   use .register-card get sane spacing between fields automatically. */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Wrapper used across auth + profile forms */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--space-4);
+}
+
+.input-group label {
+  margin-bottom: var(--space-2);
+}
+
+/* Inline "add item" row — used for skill pickers */
+.field-row {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.field-row input {
+  flex: 1;
+}

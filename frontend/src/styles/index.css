@@ -1,0 +1,21 @@
+/* ==========================================================
+   Global stylesheet entry point.
+   Import this ONCE in main.jsx — do not import individual
+   page CSS from inside page components, it makes load order
+   accidental and hard to reason about.
+========================================================== */
+
+@import "./tokens.css";
+@import "./base.css";
+@import "./forms.css";
+@import "./buttons.css";
+@import "./badges.css";
+@import "./cards.css";
+@import "./navbar.css";
+@import "./auth.css";
+@import "./jobs.css";
+@import "./applied-jobs.css";
+@import "./provider.css";
+@import "./applicants.css";
+@import "./premium.css";
+@import "./messages.css";

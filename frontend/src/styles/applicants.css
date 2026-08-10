@@ -1,0 +1,231 @@
+/* ==========================================================
+   View Applicants page
+========================================================== */
+
+.applicants-page {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-5) var(--space-12);
+  min-height: calc(100vh - 80px);
+}
+
+.applicants-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-6);
+}
+
+.applicants-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: var(--font-sm);
+  padding: 6px 0;
+  margin-bottom: var(--space-2);
+}
+
+.applicants-back:hover {
+  background: none;
+  color: var(--color-primary);
+}
+
+.applicants-subtitle {
+  color: var(--text-muted);
+  font-size: var(--font-sm);
+  margin-top: 2px;
+}
+
+.applicants-job-name {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* ---- Summary stat chips ---- */
+.app-stats-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.app-stat-chip {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.app-stat-chip-value {
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.app-stat-chip-label {
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.app-stat-chip.pending .app-stat-chip-value { color: var(--color-warning-text); }
+.app-stat-chip.shortlisted .app-stat-chip-value { color: var(--color-info-text); }
+.app-stat-chip.interview .app-stat-chip-value { color: var(--color-purple-text); }
+.app-stat-chip.hired .app-stat-chip-value { color: var(--color-success-text); }
+.app-stat-chip.rejected .app-stat-chip-value { color: var(--color-danger-text); }
+
+/* ---- Toolbar: status tabs + search ---- */
+.applicants-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+
+.applicants-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.applicants-tab {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+}
+
+.applicants-tab:hover {
+  background: var(--surface-soft);
+}
+
+.applicants-tab.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--text-on-brand);
+}
+
+.applicants-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-pill);
+  padding: 0 14px;
+  min-width: 240px;
+}
+
+.applicants-search input {
+  border: none;
+  background: transparent;
+  padding: 10px 0;
+  width: 100%;
+}
+
+/* ---- Applicant cards ---- */
+.applicants-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.applicant-card {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+}
+
+.applicant-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.applicant-main {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  min-width: 260px;
+}
+
+.applicant-info h2 {
+  font-size: var(--font-md);
+  margin-bottom: 4px;
+}
+
+.applicant-info p {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.resume-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: var(--font-sm);
+  font-weight: 600;
+}
+
+.applicant-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.status-select {
+  width: auto;
+  padding: 8px 12px;
+  font-size: var(--font-sm);
+}
+
+.applicants-empty {
+  text-align: center;
+  padding: var(--space-12) var(--space-5);
+  color: var(--text-muted);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+}
+
+@media (max-width: 900px) {
+  .app-stats-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .applicant-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .applicant-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 560px) {
+  .app-stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

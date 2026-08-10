@@ -2,7 +2,6 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../components/navbar";
-import "../App.css";
 
 const JobDetails = () => {
   const { id } = useParams();
@@ -61,54 +60,73 @@ const JobDetails = () => {
     }
   };
 
-  if (!job) return <h2>Loading...</h2>;
+  if (!job) return <p className="state-message">Loading job details...</p>;
 
   return (
     <>
       <Navbar />
 
       <div className="container">
-        <h1>{job.postName}</h1>
-        <p>
-          <b>Job ID:</b> {job.id}
-        </p>
-        <p>
-          <b>Location:</b> {job.location}
-        </p>
-        <p>
-          <b>Salary:</b> {job.salary}
-        </p>
-        <p>
-          <b>Experience:</b> {job.experience}
-        </p>
+        <div className="job-details-card">
+          <h1>{job.postName}</h1>
+          {job.companyName && (
+            <p className="job-details-company">{job.companyName}</p>
+          )}
 
-        <h3>Description</h3>
-        <p>{job.description}</p>
-        <p>
-          <b>Skills:</b> {job.skills}
-        </p>
-        <p>
-          <b>Job Type:</b> {job.jobType}{" "}
-        </p>
-        <p>
-          <b>Company:</b> {job.companyName}{" "}
-        </p>
+          <div className="job-details-meta">
+            <div className="meta-item">
+              <span className="meta-label">Job ID</span>
+              <span>{job.id}</span>
+            </div>
+            <div className="meta-item">
+              <span className="meta-label">Location</span>
+              <span>{job.location}</span>
+            </div>
+            <div className="meta-item">
+              <span className="meta-label">Salary</span>
+              <span>₹{job.salary}</span>
+            </div>
+            <div className="meta-item">
+              <span className="meta-label">Experience</span>
+              <span>{job.experience}</span>
+            </div>
+            <div className="meta-item">
+              <span className="meta-label">Job Type</span>
+              <span>{job.jobType}</span>
+            </div>
+          </div>
 
-        {/* Resume Upload Section */}
-        <div style={{ margin: "20px 0" }}>
-          <h3>Upload Resume (PDF/DOC/DOCX)</h3>
-          <input
-            type="file"
-            accept=".pdf,.doc,.docx"
-            onChange={(e) => setResume(e.target.files[0])}
-            style={{ marginBottom: "10px" }}
-          />
-          {resume && <p>Selected: {resume.name}</p>}
+          <div className="job-details-section">
+            <h3>Description</h3>
+            <p>{job.description}</p>
+          </div>
+
+          {job.skills && job.skills.length > 0 && (
+            <div className="job-details-section">
+              <h3>Skills</h3>
+              <div className="job-card-skills">
+                {Array.from(job.skills).map((skill) => (
+                  <span key={skill} className="skill-chip">{skill}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Resume Upload Section */}
+          <div className="resume-upload-block">
+            <h3>Upload Resume (PDF/DOC/DOCX)</h3>
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={(e) => setResume(e.target.files[0])}
+            />
+            {resume && <p className="resume-selected">Selected: {resume.name}</p>}
+          </div>
+
+          <button className="btn-primary btn-block" onClick={applyJob} disabled={isApplying || !resume}>
+            {isApplying ? "Applying..." : "Apply Now"}
+          </button>
         </div>
-
-        <button onClick={applyJob} disabled={isApplying || !resume}>
-          {isApplying ? "Applying..." : "Apply Now"}
-        </button>
       </div>
     </>
   );

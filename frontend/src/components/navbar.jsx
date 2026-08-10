@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import logo from "../assets/1.png";
+import logo from "../assets/2.png";
 
 const Navbar = () => {
   const role = localStorage.getItem("role");
@@ -42,6 +42,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="logo">
         <img src={logo} alt="JobMatch Logo" className="logo-img" />
+        <span className="logo-text"></span>
       </div>
 
       <div className="nav-links">
@@ -120,7 +121,7 @@ const Navbar = () => {
         )}
 
         <button className="logout-btn" onClick={logout}>
-          Logout
+          <span></span> Logout
         </button>
       </div>
     </nav>

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/navbar";
-import "../../App.css";
 
 const JobSeekerDashboard = () => {
   const navigate = useNavigate();
@@ -188,10 +187,10 @@ const JobSeekerDashboard = () => {
             <option value="1200000">₹12 LPA+</option>
           </select>
 
-          <button onClick={resetFilters}>Reset</button>
+          <button className="btn-secondary" onClick={resetFilters}>Reset</button>
         </div>
 
-        <h3>{filteredJobs.length} Jobs Found</h3>
+        <h3 className="jobs-found-heading">{filteredJobs.length} Jobs Found</h3>
 
         {/* Job Cards */}
         <div className="job-grid">
@@ -213,30 +212,19 @@ const JobSeekerDashboard = () => {
                 {job.description}
               </p>
 
-              {/* Skills - Fixed */}
-              <p>
-                <strong>Skills:</strong>{" "}
-                {job.skills && job.skills.length > 0 ? (
-                  <span style={{ display: "inline-flex", flexWrap: "wrap", gap: "6px" }}>
-                    {Array.from(job.skills).map((skill) => (
-                      <span
-                        key={skill}
-                        style={{
-                          background: "#e8f0fe",
-                          color: "#1a73e8",
-                          padding: "3px 10px",
-                          borderRadius: "12px",
-                          fontSize: "13px",
-                        }}
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </span>
-                ) : (
-                  "Not specified"
-                )}
-              </p>
+              {/* Skills */}
+              <p><strong>Skills:</strong></p>
+              {job.skills && job.skills.length > 0 ? (
+                <div className="job-card-skills">
+                  {Array.from(job.skills).map((skill) => (
+                    <span key={skill} className="skill-chip">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p>Not specified</p>
+              )}
 
               <p>
                 <strong>Location:</strong> {job.location || "Not specified"}

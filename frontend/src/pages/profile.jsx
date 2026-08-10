@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import "../App.css";
 
 const Profile = () => {
   const userString = localStorage.getItem("user");
@@ -94,36 +93,16 @@ const Profile = () => {
         <h2>My Profile</h2>
 
         {/* ========== Profile Image ========== */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "25px" }}>
+        <div className="profile-avatar-block">
           {user?.image ? (
-            <img
-              src={`http://localhost:8080/files/images/${user.image}`}
-              alt="Profile"
-              style={{
-                width: "100px",
-                height: "100px",
-                borderRadius: "50%",
-                objectFit: "cover",
-                border: "3px solid #4f46e5",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.15)"
-              }}
-            />
+            <div className="avatar avatar-lg">
+              <img
+                src={`http://localhost:8080/files/images/${user.image}`}
+                alt="Profile"
+              />
+            </div>
           ) : (
-            <div
-              style={{
-                width: "100px",
-                height: "100px",
-                borderRadius: "50%",
-                background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-                color: "white",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "2rem",
-                fontWeight: "bold",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.15)"
-              }}
-            >
+            <div className="avatar avatar-lg">
               {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
             </div>
           )}
@@ -168,32 +147,15 @@ const Profile = () => {
         <div className="input-group">
           <label>Skills</label>
           {user?.skills && user.skills.length > 0 ? (
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "8px",
-                marginTop: "6px",
-              }}
-            >
+            <div className="skill-chip-group">
               {user.skills.map((skill) => (
-                <span
-                  key={skill}
-                  style={{
-                    background: "#e8f0fe",
-                    color: "#1a73e8",
-                    padding: "6px 14px",
-                    borderRadius: "20px",
-                    fontSize: "14px",
-                    fontWeight: "500",
-                  }}
-                >
+                <span key={skill} className="skill-chip">
                   {skill}
                 </span>
               ))}
             </div>
           ) : (
-            <p style={{ color: "#888", marginTop: "6px" }}>No skills added yet</p>
+            <p className="state-message">No skills added yet</p>
           )}
         </div>
 
@@ -207,46 +169,31 @@ const Profile = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="resume-link"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  color: "#4f46e5",
-                  fontWeight: "600",
-                  textDecoration: "none",
-                  marginTop: "6px",
-                  fontSize: "15px",
-                }}
               >
                 📄 View / Download Resume
               </a>
             ) : (
-              <p style={{ color: "#888", marginTop: "6px", fontSize: "14px" }}>No resume uploaded yet</p>
+              <p className="state-message">No resume uploaded yet</p>
             )}
           </div>
         )}
 
         {/* ========== Premium Section ========== */}
         {user?.role === "job_seeker" && (
-          <div className="premium-section" style={{ marginTop: "30px" }}>
+          <div className="premium-section">
             <h3>Premium Membership</h3>
 
             {loadingPremium ? (
               <p>Loading premium details...</p>
             ) : premium ? (
               <>
-                {/* <div className="input-group">
-                  <label>Plan</label>
-                  <input type="text" value={premium.membership} readOnly />
-                </div> */}
-
                 <div className="input-group">
                   <label>Status</label>
                   <input
                     type="text"
                     value={premium.membershipStatus}
                     readOnly
-                    style={{ color: "green", fontWeight: "bold" }}
+                    className="status-active-text"
                   />
                 </div>
 
@@ -256,8 +203,7 @@ const Profile = () => {
                 </div>
 
                 <button
-                  className="register-btn"
-                  style={{ backgroundColor: "#dc3545", marginTop: "10px" }}
+                  className="btn-danger btn-block"
                   onClick={handleDeactivate}
                   disabled={deactivating}
                 >
@@ -275,7 +221,7 @@ const Profile = () => {
 
         {/* ========== Update Button ========== */}
         <Link to="/update-profile">
-          <button className="register-btn" style={{ marginTop: "25px" }}>
+          <button className="register-btn btn-block" style={{ marginTop: "25px" }}>
             Update Profile
           </button>
         </Link>

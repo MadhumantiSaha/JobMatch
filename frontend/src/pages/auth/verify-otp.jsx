@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import "../../App.css";
 
 
 function VerifyOtp() {
@@ -46,24 +45,30 @@ function VerifyOtp() {
   };
 
   return (
-    <div>
-      <h2>Verify OTP</h2>
+    <div className="register-container">
+      <div className="register-card">
+        <h2>Verify OTP</h2>
+        <p>Enter the OTP sent to {email || "your email"}.</p>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Enter OTP"
-          value={otp}
-          onChange={(e) =>
-            setOtp(e.target.value)
-          }
-          required
-        />
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label>OTP</label>
+            <input
+              type="text"
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) =>
+                setOtp(e.target.value)
+              }
+              required
+            />
+          </div>
 
-        <button type="submit">
-          Verify OTP
-        </button>
-      </form>
+          <button type="submit" className="register-btn">
+            Verify OTP
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

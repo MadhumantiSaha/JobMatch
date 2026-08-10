@@ -1,6 +1,6 @@
 # 💼 JobMatch - Online Job Portal
 
-JobMatch is a full-stack web application designed to connect Job Seekers with Job Providers. It provides a robust, secure, and modern platform for recruiters to post jobs, manage applicants, and transition statuses, while enabling candidates to build profiles, upload resumes, search for opportunities, and track their application progress.
+JobMatch is a premium, full-stack web application designed to seamlessly connect Job Seekers with Job Providers. It provides a robust, secure, and modern platform for recruiters to post jobs, manage applicants, track applicant metrics through an analytics pipeline, and chat directly in real time, while enabling candidates to build profiles, upload resumes, search for opportunities, upgrade to premium features, and track their application progress.
 
 ---
 
@@ -11,18 +11,29 @@ JobMatch is a full-stack web application designed to connect Job Seekers with Jo
 *   **OTP Email Verification:** Secure registration and authentication verification using SMTP-enabled OTP codes with validation time-limits (expiry).
 *   **Role-Based Access Control:** Separate layouts, routing, and access permissions for `job_seeker` and `job_provider`.
 
+### 💬 Real-Time Messaging & Conversations
+*   **Recruiter-Candidate Chat:** Direct real-time messaging system allowing job providers and job seekers to communicate seamlessly.
+*   **Unread Badges:** Unread message tracking with instant notification counters.
+*   **Conversation History:** Threaded conversations displaying status and timestamps.
+
+### 🌟 Premium Membership (Razorpay Integration)
+*   **Monetization Engine:** Job seekers can upgrade to a premium subscription plan (₹499/30 Days) via a simulated Razorpay payment gateway checkout flow.
+*   **Premium Perks:** Unlocks AI-powered resume parsing, email job matches every 4 days, early access to new postings, and featured candidate status.
+
+### 📊 Recruiter Analytics Dashboard
+*   **Application Timelines:** Custom SVG-based line charts visualizing daily application flow over the last 14 days.
+*   **Hiring Funnel:** High-fidelity tracking of applicant distribution (Pending, Shortlisted, Interview, Hired, Rejected) with real-time conversion rates.
+*   **Category Analysis:** Dynamic breakdown of posted jobs vs. applicant count grouped by job type.
+
 ### 👥 For Job Seekers
 *   **Profile Management:** Update personal details, contact information, and profile picture.
 *   **Resume Upload:** Upload and persist resumes (PDF format) to showcase qualifications.
 *   **Browse & Search Jobs:** Browse jobs by keyword, skills, job type, or salary.
 *   **Apply Instantly:** Seamlessly apply for jobs with personal details and target resumes.
-*   **Application Tracking:** Track application status updates (Pending, Shortlisted, Interview, Rejected, Hired).
 
 ### 🏢 For Job Providers (Recruiters)
 *   **Job Management:** Create, update, view, and delete job postings.
-*   **Applicant Dashboard:** View all applicants who applied for jobs, download/view their resumes directly, and review contact details.
-*   **Application Review:** Update candidate application status through the hiring funnel.
-*   **Company Profiles:** Maintain company details and information.
+*   **Applicant Dashboard:** View all applicants who applied for jobs, download/view their resumes directly, review contact details, and progress their hiring status.
 
 ---
 
@@ -35,6 +46,7 @@ JobMatch is a full-stack web application designed to connect Job Seekers with Jo
 *   **Database:** MySQL (relational database storage)
 *   **Security & Auth:** io.jsonwebtoken (JWT), Spring Security
 *   **Notification:** Spring Boot Starter Mail (JavaMailSender with SMTP authentication & STARTTLS)
+*   **Payment Gateway:** Razorpay SDK integration (Order creation & Signature verification APIs)
 *   **Build Tool:** Maven
 
 ### Frontend
@@ -42,7 +54,8 @@ JobMatch is a full-stack web application designed to connect Job Seekers with Jo
 *   **Framework:** React 19 (Vite)
 *   **Routing:** React Router v7
 *   **API Client:** Axios
-*   **Styling:** Custom CSS / CSS Modules for modular styling
+*   **Payment:** Razorpay Web Checkout Integration
+*   **Styling:** Highly modular CSS System (`frontend/src/styles/` containing global design tokens, base layouts, and component-specific stylesheets)
 
 ---
 
@@ -53,8 +66,8 @@ JobMatch/
 ├── backend/                  # Spring Boot REST API
 │   ├── src/main/java/        # Java Source Files
 │   │   └── com/example/OnlineJob/System/
-│   │       ├── controller/   # REST Controllers (Endpoints)
-│   │       ├── model/        # JPA Entities (User, Job, Application, Product)
+│   │       ├── controller/   # REST Controllers (Endpoints for Auth, Jobs, Messaging, Premium)
+│   │       ├── model/        # JPA Entities (User, Job, Application, Conversation, Message)
 │   │       ├── repository/   # JPA Repositories
 │   │       ├── service/      # Business Logic Services
 │   │       └── util/         # Utility Classes (JWT, Email OTP helpers)
@@ -64,12 +77,15 @@ JobMatch/
 └── frontend/                 # React Single Page Application (SPA)
     ├── public/               # Static assets
     ├── src/
-    │   ├── assets/           # CSS & design files
-    │   ├── components/       # Reusable React components
+    │   ├── assets/           # CSS & design assets
+    │   ├── components/       # Reusable React components (Navbar, Layouts, Sidebars)
+    │   ├── hooks/            # Custom React hooks (e.g., useProviderData)
     │   ├── pages/            # View Pages (Home, Login, Register, Job details)
-    │   │   ├── job_provider/ # Recruiter dashboard, My Jobs, View Applicants
-    │   │   └── job_seeker/   # Candidate application/profile management
+    │   │   ├── auth/         # Authentication flows (Login, Register, OTP Verification)
+    │   │   ├── job_provider/ # Recruiter dashboard, My Jobs, View Applicants, Analytics
+    │   │   └── job_seeker/   # Candidate application/profile management, Premium upgrade
     │   ├── routes/           # Routing configuration (AppRoutes.jsx)
+    │   ├── styles/           # Modular CSS stylesheets (design tokens, layout, forms, etc.)
     │   ├── App.jsx           # Main App component
     │   └── main.jsx          # Vite main entrypoint
     ├── package.json          # Frontend packages & scripts
@@ -144,3 +160,4 @@ The application will be accessible at `http://localhost:5173`.
 1. Perform changes in a new feature branch.
 2. Ensure the code builds on both frontend and backend before committing.
 3. Test your changes locally to verify role-based security configurations.
+

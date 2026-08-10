@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../../App.css";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
@@ -39,24 +38,34 @@ function ForgetPassword() {
   };
 
   return (
-    <div>
-      <h2>Forgot Password</h2>
+    <div className="register-container">
+      <div className="register-card">
+        <h2>Forgot Password</h2>
+        <p>Enter your email and we'll send you an OTP.</p>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Enter Email"
-          value={email}
-          onChange={(e) =>
-            setEmail(e.target.value)
-          }
-          required
-        />
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label>Email Address</label>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) =>
+                setEmail(e.target.value)
+              }
+              required
+            />
+          </div>
 
-        <button type="submit">
-          Send OTP
-        </button>
-      </form>
+          <button type="submit" className="register-btn">
+            Send OTP
+          </button>
+
+          <div className="login-footer">
+            Remembered your password? <Link to="/login">Login</Link>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

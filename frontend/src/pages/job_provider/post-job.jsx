@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import Navbar from "../../components/navbar";
+import ProviderLayout from "../../components/provider-layout";
 
 const PostJob = () => {
   const token = localStorage.getItem("token");
@@ -84,109 +84,93 @@ const PostJob = () => {
   };
 
   return (
-    <>
-      <Navbar />
-
+    <ProviderLayout>
       <div className="container">
         <h1>Post a Job</h1>
 
-        <form onSubmit={postJob}>
-          <input
-            type="text"
-            name="postName"
-            placeholder="Job Title"
-            value={job.postName}
-            onChange={handleChange}
-            required
-          />
+        <form className="post-job-form" onSubmit={postJob}>
+          <div className="input-group">
+            <label>Job Title</label>
+            <input
+              type="text"
+              name="postName"
+              placeholder="e.g. Senior Backend Engineer"
+              value={job.postName}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          <input
-            type="text"
-            name="company"
-            placeholder="Company"
-            value={job.company}
-            onChange={handleChange}
-            required
-          />
+          <div className="input-group">
+            <label>Company</label>
+            <input
+              type="text"
+              name="company"
+              placeholder="Company name"
+              value={job.company}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          <input
-            type="text"
-            name="location"
-            placeholder="Location"
-            value={job.location}
-            onChange={handleChange}
-            required
-          />
+          <div className="input-group">
+            <label>Location</label>
+            <input
+              type="text"
+              name="location"
+              placeholder="e.g. Bengaluru / Remote"
+              value={job.location}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          <input
-            type="number"
-            name="salary"
-            placeholder="Salary"
-            value={job.salary}
-            onChange={handleChange}
-            required
-          />
+          <div className="input-group">
+            <label>Salary</label>
+            <input
+              type="number"
+              name="salary"
+              placeholder="Annual salary"
+              value={job.salary}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          <input
-            type="text"
-            name="experience"
-            placeholder="Experience (e.g. 2-4 years)"
-            value={job.experience}
-            onChange={handleChange}
-            required
-          />
+          <div className="input-group">
+            <label>Experience</label>
+            <input
+              type="text"
+              name="experience"
+              placeholder="e.g. 2-4 years"
+              value={job.experience}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
           {/* ========== Skills Section ========== */}
-          <div style={{ marginBottom: "15px" }}>
-            <label style={{ display: "block", marginBottom: "6px", fontWeight: "500" }}>
-              Required Skills
-            </label>
+          <div className="input-group skills-field">
+            <label>Required Skills</label>
 
-            {/* Skills chips */}
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "8px",
-                marginBottom: "10px",
-              }}
-            >
-              {skills.map((skill) => (
-                <span
-                  key={skill}
-                  style={{
-                    background: "#e8f0fe",
-                    color: "#1a73e8",
-                    padding: "6px 12px",
-                    borderRadius: "20px",
-                    fontSize: "14px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                  }}
-                >
-                  {skill}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveSkill(skill)}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      color: "#d93025",
-                      cursor: "pointer",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      lineHeight: 1,
-                    }}
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </div>
+            {skills.length > 0 && (
+              <div className="skills-chip-list">
+                {skills.map((skill) => (
+                  <span key={skill} className="skill-chip">
+                    {skill}
+                    <button
+                      type="button"
+                      className="chip-remove"
+                      onClick={() => handleRemoveSkill(skill)}
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
 
-            {/* Add skill input */}
-            <div style={{ display: "flex", gap: "8px" }}>
+            <div className="field-row">
               <input
                 type="text"
                 placeholder="Add a skill (e.g. Java)"
@@ -198,41 +182,46 @@ const PostJob = () => {
                     handleAddSkill();
                   }
                 }}
-                style={{ flex: 1 }}
               />
-              <button type="button" onClick={handleAddSkill}>
+              <button type="button" className="btn-secondary" onClick={handleAddSkill}>
                 Add
               </button>
             </div>
           </div>
           {/* ==================================== */}
 
-          <select
-            name="jobType"
-            value={job.jobType}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Job Type</option>
-            <option value="FULL_TIME">Full Time</option>
-            <option value="PART_TIME">Part Time</option>
-            <option value="INTERNSHIP">Internship</option>
-            <option value="REMOTE">Remote</option>
-          </select>
+          <div className="input-group">
+            <label>Job Type</label>
+            <select
+              name="jobType"
+              value={job.jobType}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select Job Type</option>
+              <option value="FULL_TIME">Full Time</option>
+              <option value="PART_TIME">Part Time</option>
+              <option value="INTERNSHIP">Internship</option>
+              <option value="REMOTE">Remote</option>
+            </select>
+          </div>
 
-          <textarea
-            name="description"
-            placeholder="Job Description"
-            rows="8"
-            value={job.description}
-            onChange={handleChange}
-            required
-          />
+          <div className="input-group">
+            <label>Job Description</label>
+            <textarea
+              name="description"
+              placeholder="Describe the role, responsibilities and requirements..."
+              rows="8"
+              value={job.description}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          <button type="submit">Post Job</button>
+          <button type="submit" className="btn-primary btn-block">Post Job</button>
         </form>
       </div>
-    </>
+    </ProviderLayout>
   );
 };
 

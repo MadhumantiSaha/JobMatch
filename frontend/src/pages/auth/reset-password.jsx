@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import "../../App.css";
 
 
 function ResetPassword() {
@@ -53,36 +52,45 @@ function ResetPassword() {
   };
 
   return (
-    <div>
-      <h2>Reset Password</h2>
+    <div className="register-container">
+      <div className="register-card">
+        <h2>Reset Password</h2>
+        <p>Choose a new password for your account.</p>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="password"
-          placeholder="New Password"
-          value={password}
-          onChange={(e) =>
-            setPassword(e.target.value)
-          }
-          required
-        />
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label>New Password</label>
+            <input
+              type="password"
+              placeholder="New Password"
+              value={password}
+              onChange={(e) =>
+                setPassword(e.target.value)
+              }
+              required
+            />
+          </div>
 
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) =>
-            setConfirmPassword(
-              e.target.value
-            )
-          }
-          required
-        />
+          <div className="input-group">
+            <label>Confirm Password</label>
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) =>
+                setConfirmPassword(
+                  e.target.value
+                )
+              }
+              required
+            />
+          </div>
 
-        <button type="submit">
-          Reset Password
-        </button>
-      </form>
+          <button type="submit" className="register-btn">
+            Reset Password
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

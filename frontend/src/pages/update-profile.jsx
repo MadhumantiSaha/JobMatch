@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../App.css";
 
 const UpdateProfile = () => {
   const navigate = useNavigate();
@@ -172,43 +171,29 @@ const UpdateProfile = () => {
           </div>
 
           {/* ===================== Skills Section ===================== */}
-          <div className="input-group">
+          <div className="input-group skills-field">
             <label>Skills</label>
 
             {/* Current skills as chips */}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "10px" }}>
-              {skills.map((skill) => (
-                <span
-                  key={skill}
-                  style={{
-                    background: "#e0e0e0",
-                    padding: "5px 12px",
-                    borderRadius: "20px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                  }}
-                >
-                  {skill}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveSkill(skill)}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      color: "red",
-                      cursor: "pointer",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </div>
+            {skills.length > 0 && (
+              <div className="skills-chip-list">
+                {skills.map((skill) => (
+                  <span key={skill} className="skill-chip">
+                    {skill}
+                    <button
+                      type="button"
+                      className="chip-remove"
+                      onClick={() => handleRemoveSkill(skill)}
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
 
             {/* Add new skill */}
-            <div style={{ display: "flex", gap: "8px" }}>
+            <div className="field-row">
               <input
                 type="text"
                 value={newSkill}
@@ -221,7 +206,7 @@ const UpdateProfile = () => {
                   }
                 }}
               />
-              <button type="button" onClick={handleAddSkill} className="register-btn">
+              <button type="button" onClick={handleAddSkill} className="btn-secondary">
                 Add
               </button>
             </div>
@@ -243,18 +228,18 @@ const UpdateProfile = () => {
                 accept=".pdf"
                 onChange={(e) => setResumeFile(e.target.files[0])}
               />
-              <small style={{ color: "#666", marginTop: "6px", display: "block" }}>
+              <small className="state-message" style={{ padding: 0, textAlign: "left", display: "block", marginTop: "6px" }}>
                 Upload your resume and skills will be extracted automatically using AI.
               </small>
             </div>
           )}
 
-          <button type="submit" className="register-btn" disabled={loading}>
+          <button type="submit" className="register-btn btn-block" disabled={loading}>
             {loading ? "Updating..." : "Update Profile"}
           </button>
 
           {message && (
-            <p style={{ marginTop: "15px", color: message.includes("success") ? "green" : "red" }}>
+            <p className={`auth-message ${message.toLowerCase().includes("success") ? "success" : "error"}`}>
               {message}
             </p>
           )}

@@ -5,7 +5,7 @@ import Register from "../pages/auth/register";
 import ForgetPassword from "../pages/auth/forget-Password";
 import VerifyOtp from "../pages/auth/verify-otp";
 import ResetPassword from "../pages/auth/reset-password";
-import ProtectedRoute from "../components/protectedRoute";
+import ProtectedRoute from "../components/ProtectedRoute";
 import Profile from "../pages/profile";
 import UpdateProfile from "../pages/update-profile";
 import AppliedJobs from "../pages/job_seeker/applied-jobs";
@@ -16,6 +16,9 @@ import ViewApplicant from "../pages/job_provider/view-applicant";
 import Jobs from "../pages/job_seeker/jobs";
 import PremiumPlans from "../pages/job_seeker/premium-plans";
 import Messages from "../pages/messages";
+import Analytics from "../pages/job_provider/analytics";
+import ApplicantsAggregate from "../pages/job_provider/applicants-aggregate";
+import Notifications from "../pages/job_provider/notifications";
 
 
 
@@ -30,8 +33,7 @@ function AppRoutes() {
       <Route path="/verify-otp" element={<VerifyOtp />} />
       <Route path="/reset-password" element={<ResetPassword />} />
 
-      {/* Protected Routes */}
-      {/* <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} /> */}
+      
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route
         path="/update-profile"
@@ -51,6 +53,55 @@ function AppRoutes() {
       
       <Route path="/view-applicant/:jobId" element={<ProtectedRoute><ViewApplicant /></ProtectedRoute> } />
       <Route path="/view-applicants/:jobId" element={<ProtectedRoute><ViewApplicant /></ProtectedRoute>} />
+
+      {/* Sidebar destinations */}
+      <Route path="/provider/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+      <Route
+        path="/provider/all-applicants"
+        element={
+          <ProtectedRoute>
+            <ApplicantsAggregate
+              icon="👥"
+              title="All Applicants"
+              subtitle="Every applicant across every job you've posted"
+            />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/provider/shortlisted"
+        element={
+          <ProtectedRoute>
+            <ApplicantsAggregate
+              icon="⭐"
+              title="Shortlisted"
+              subtitle="Applicants you've shortlisted, across every job"
+              lockedStatus="SHORTLISTED"
+            />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/provider/interviews"
+        element={
+          <ProtectedRoute>
+            <ApplicantsAggregate
+              icon="🗓️"
+              title="Interviews"
+              subtitle="Applicants currently in the interview stage"
+              lockedStatus="INTERVIEW"
+            />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/provider/notifications"
+        element={
+          <ProtectedRoute>
+            <Notifications />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

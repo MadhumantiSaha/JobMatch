@@ -18,6 +18,7 @@ import java.util.Map;
 @RequestMapping("/messages")
 @CrossOrigin(origins = "http://localhost:5173")
 public class MessagingController {
+
     @Autowired
     private MessagingService messagingService;
 
@@ -46,8 +47,6 @@ public class MessagingController {
         } catch (Exception e) {
             response.put("success", false);
             response.put("error", e.getMessage());
-
-            // 403 specifically communicates "blocked by premium rule" to the frontend
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
     }
@@ -74,7 +73,6 @@ public class MessagingController {
         } catch (Exception e) {
             response.put("success", false);
             response.put("error", e.getMessage());
-
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
@@ -89,7 +87,10 @@ public class MessagingController {
         try {
             Long userId = jwtUtil.extractId(authHeader.substring(7));
 
-            List<Message> messages = messagingService.getMessages(conversationId, userId);
+            messagingService.markConversationAsRead(conversationId, userId);
+
+            List<Message> messages =
+                    messagingService.getMessages(conversationId, userId);
 
             response.put("success", true);
             response.put("data", messages);
@@ -99,7 +100,6 @@ public class MessagingController {
         } catch (Exception e) {
             response.put("success", false);
             response.put("error", e.getMessage());
-
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
     }
@@ -113,7 +113,8 @@ public class MessagingController {
         try {
             Long userId = jwtUtil.extractId(authHeader.substring(7));
 
-            List<Conversation> conversations = messagingService.getMyConversations(userId);
+            List<Conversation> conversations =
+                    messagingService.getMyConversations(userId);
 
             response.put("success", true);
             response.put("data", conversations);
@@ -123,8 +124,25 @@ public class MessagingController {
         } catch (Exception e) {
             response.put("success", false);
             response.put("error", e.getMessage());
-
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @GetMapping("/unread-count")
+    public ResponseEntity<?> getUnreadCount(
+            @RequestHeader("Authorization") String authHeader) {
+
+        try {
+            Long userId = jwtUtil.extractId(authHeader.substring(7));
+            long count = messagingService.getUnreadCount(userId);
+
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "count", count
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false, "error", e.getMessage()));
         }
     }
 }

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../../components/navbar";
-import "../../App.css";
 
 const Premium = () => {
   const [loading, setLoading] = useState(false);
