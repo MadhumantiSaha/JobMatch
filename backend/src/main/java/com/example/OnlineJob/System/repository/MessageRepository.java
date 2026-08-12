@@ -25,4 +25,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     """)
     int markAsRead(@Param("conversationId") Long conversationId,
                    @Param("userId") Long userId);
+
+    long countByConversationIdAndReceiverIdAndReadFalse(Long conversationId, Long receiverId);
 }

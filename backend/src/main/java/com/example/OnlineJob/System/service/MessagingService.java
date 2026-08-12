@@ -11,7 +11,10 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MessagingService {
@@ -76,6 +79,7 @@ public class MessagingService {
                 );
             }
         }
+
         // job_provider can always open a thread, regardless of the seeker's plan
 
         Conversation conversation = new Conversation();
@@ -151,15 +155,33 @@ public class MessagingService {
         return messageRepository.findByConversationOrderBySentAtAsc(conversation);
     }
 
-    public List<Conversation> getMyConversations(Long userId) {
+    public List<Map<String, Object>> getMyConversations(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (user.getRole() == User.Role.job_seeker) {
-            return conversationRepository.findByJobSeeker(user);
-        } else {
-            return conversationRepository.findByJobProvider(user);
+        // Use the List method – NOT Optional
+        List<Conversation> conversations =
+                conversationRepository.findAllByUserId(userId);
+
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (Conversation c : conversations) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("id", c.getId());
+            item.put("jobSeeker", c.getJobSeeker());
+            item.put("jobProvider", c.getJobProvider());
+            item.put("activated", c.isActivated());
+            item.put("initiatedBy", c.getInitiatedBy());
+            item.put("createdAt", c.getCreatedAt());
+
+            long unread = messageRepository
+                    .countByConversationIdAndReceiverIdAndReadFalse(c.getId(), userId);
+            item.put("unreadCount", unread);
+
+            result.add(item);
         }
+
+        return result;
     }
 
     public boolean isParticipant(Long conversationId, Long userId) {

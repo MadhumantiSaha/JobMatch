@@ -109,18 +109,15 @@ public class MessagingController {
             @RequestHeader("Authorization") String authHeader) {
 
         Map<String, Object> response = new HashMap<>();
-
         try {
             Long userId = jwtUtil.extractId(authHeader.substring(7));
-
-            List<Conversation> conversations =
+            // now returns List<Map<...>> with unreadCount
+            List<Map<String, Object>> conversations =
                     messagingService.getMyConversations(userId);
 
             response.put("success", true);
             response.put("data", conversations);
-
             return ResponseEntity.ok(response);
-
         } catch (Exception e) {
             response.put("success", false);
             response.put("error", e.getMessage());
