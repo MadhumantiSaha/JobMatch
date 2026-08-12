@@ -55,6 +55,15 @@ const Messages = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  useEffect(() => {
+    fetchConversations();
+    const listPoll = setInterval(fetchConversations, 15000); // every 15s
+    return () => {
+      clearInterval(listPoll);
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+  }, []);
+
   const authHeaders = () => ({
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -78,12 +87,24 @@ const Messages = () => {
   const loadMessages = async (conversationId, silent = false) => {
     try {
       if (!silent) setLoadingChat(true);
+
       const res = await axios.get(
         `http://localhost:8080/messages/conversation/${conversationId}`,
         authHeaders()
       );
+
       setMessages(res.data.data || []);
       setError("");
+
+      // Clear unread badge for this conversation locally
+      setConversations((prev) =>
+        prev.map((c) =>
+          c.id === conversationId ? { ...c, unreadCount: 0 } : c
+        )
+      );
+
+      // Refresh navbar total unread badge
+      window.dispatchEvent(new Event("messages-read"));
     } catch (err) {
       console.error(err);
       if (!silent) {
@@ -164,23 +185,35 @@ const Messages = () => {
                 {conversations.map((c) => {
                   const other = otherParty(c);
                   const active = c.id === selectedId;
+                  const unread = c.unreadCount || 0;
+
                   return (
                     <li
                       key={c.id}
-                      className={`conversation-item ${active ? "active" : ""}`}
+                      className={`conversation-item ${active ? "active" : ""} ${
+                        unread > 0 ? "has-unread" : ""
+                      }`}
                       onClick={() => selectConversation(c.id)}
                     >
                       <div className="conversation-avatar">
                         {(other?.name || "?").charAt(0).toUpperCase()}
                       </div>
+
                       <div className="conversation-info">
-                        <div className="conversation-name">
-                          {other?.name || "User"}
+                        <div className="conversation-name-row">
+                          <span className="conversation-name">
+                            {other?.name || "User"}
+                          </span>
+                          {unread > 0 && (
+                            <span className="conversation-unread-badge">
+                              {unread > 99 ? "99+" : unread}
+                            </span>
+                          )}
                         </div>
                         <div className="conversation-meta">
                           {other?.email ||
                             (c.initiatedBy
-                              ? `Started by ${c.initiatedBy.toLowerCase()}`
+                              ? `Started by ${String(c.initiatedBy).toLowerCase()}`
                               : "Conversation")}
                         </div>
                       </div>
@@ -209,14 +242,18 @@ const Messages = () => {
                     <h3>{peer?.name || "Conversation"}</h3>
                     <p className="messages-peer-email">
                       {peer?.email || ""}
-                      {peer?.role ? ` · ${String(peer.role).replace("_", " ")}` : ""}
+                      {peer?.role
+                        ? ` · ${String(peer.role).replace("_", " ")}`
+                        : ""}
                     </p>
                   </div>
                 </div>
 
                 <div className="messages-thread">
                   {loadingChat ? (
-                    <div className="messages-thread-loading">Loading messages...</div>
+                    <div className="messages-thread-loading">
+                      Loading messages...
+                    </div>
                   ) : error ? (
                     <div className="messages-thread-error">{error}</div>
                   ) : messages.length === 0 ? (
@@ -231,7 +268,9 @@ const Messages = () => {
                       return (
                         <div
                           key={m.id}
-                          className={`message-bubble ${isMine ? "mine" : "theirs"}`}
+                          className={`message-bubble ${
+                            isMine ? "mine" : "theirs"
+                          }`}
                         >
                           <div className="message-content">{m.content}</div>
                           <div className="message-time">
