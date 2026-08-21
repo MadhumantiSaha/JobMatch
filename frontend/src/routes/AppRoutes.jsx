@@ -19,13 +19,16 @@ import Messages from "../pages/messages";
 import Analytics from "../pages/job_provider/analytics";
 import ApplicantsAggregate from "../pages/job_provider/applicants-aggregate";
 import Notifications from "../pages/job_provider/notifications";
+import CandidateLanding from "../pages/landing/CandidateLanding";
+import RecruiterLanding from "../pages/landing/RecruiterLanding";
 
 
 
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
+      <Route path="/" element={<CandidateLanding />} />
+      <Route path="/employers" element={<RecruiterLanding />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 

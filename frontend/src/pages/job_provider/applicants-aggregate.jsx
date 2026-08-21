@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProviderLayout from "../../components/provider-layout";
 import { useProviderData, getSeekerId } from "../../hooks/useProviderData";
+import { API_BASE_URL } from "../../config";
 
 const TABS = [
   { key: "ALL", label: "All" },
@@ -64,7 +65,7 @@ const ApplicantsAggregate = ({ lockedStatus, title, subtitle, icon }) => {
   const updateStatus = async (applicationId, status) => {
     try {
       await axios.put(
-        `http://localhost:8080/application/${applicationId}/status`,
+        `${API_BASE_URL}/application/${applicationId}/status`,
         null,
         { params: { status }, headers: { Authorization: `Bearer ${token}` } }
       );
@@ -83,7 +84,7 @@ const ApplicantsAggregate = ({ lockedStatus, title, subtitle, icon }) => {
     setMessagingId(seekerId);
     try {
       const res = await axios.post(
-        `http://localhost:8080/messages/start/${seekerId}`,
+        `${API_BASE_URL}/messages/start/${seekerId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -178,7 +179,7 @@ const ApplicantsAggregate = ({ lockedStatus, title, subtitle, icon }) => {
                           </p>
                           {application.resume && (
                             <a
-                              href={`http://localhost:8080/files/resumes/${application.resume}`}
+                              href={`${API_BASE_URL}/files/resumes/${application.resume}`}
                               target="_blank"
                               rel="noreferrer"
                               className="resume-link"

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../config";
+import logo from "../../assets/logo.png";
 
 function ForgetPassword() {
   const [email, setEmail] = useState("");
@@ -10,26 +11,21 @@ function ForgetPassword() {
     e.preventDefault();
 
     try {
-      const res = await fetch(
-        "http://localhost:8080/user/forget-password",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }),
-        }
-      );
+      const res = await fetch(`${API_BASE_URL}/user/forget-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
 
       const data = await res.json();
 
       if (data.success) {
         alert("OTP sent successfully");
-        navigate("/verify-otp", {
-          state: { email },
-        });
+        navigate("/verify-otp", { state: { email } });
       } else {
-        alert(data.error);
+        alert(data.error || "Failed to send OTP");
       }
     } catch (err) {
       console.log(err);
@@ -38,33 +34,63 @@ function ForgetPassword() {
   };
 
   return (
-    <div className="register-container">
-      <div className="register-card">
-        <h2>Forgot Password</h2>
-        <p>Enter your email and we'll send you an OTP.</p>
+    <div className="register-container has-brand">
+      <aside className="auth-brand-panel">
+        <Link to="/">
+          <img src={logo} alt="JobMatch" className="auth-brand-logo" />
+        </Link>
+        <div className="auth-brand-content">
+          <h1>Forgot your password?</h1>
+          <p>
+            No worries — enter your email and we&apos;ll send a one-time code to
+            reset it securely.
+          </p>
+        </div>
+        <p className="auth-brand-footer">
+          © {new Date().getFullYear()} JobMatch
+        </p>
+      </aside>
 
-        <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label>Email Address</label>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) =>
-                setEmail(e.target.value)
-              }
-              required
-            />
+      <div className="auth-form-side">
+        <div className="register-card">
+          <div className="auth-card-logo">
+            <Link to="/">
+              <img src={logo} alt="JobMatch" />
+            </Link>
           </div>
 
-          <button type="submit" className="register-btn">
-            Send OTP
-          </button>
+          <h2>Forgot Password</h2>
+          <p className="auth-card-sub">
+            We&apos;ll email you a verification code
+          </p>
 
-          <div className="login-footer">
-            Remembered your password? <Link to="/login">Login</Link>
+          <form onSubmit={handleSubmit}>
+            <div className="input-group">
+              <label>Email Address</label>
+              <input
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+              />
+            </div>
+
+            <button type="submit" className="register-btn">
+              Send OTP
+            </button>
+
+            <div className="auth-footer">
+              Remember your password?
+              <Link to="/login">Sign in</Link>
+            </div>
+          </form>
+
+          <div className="auth-back-home">
+            <Link to="/">← Back to home</Link>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

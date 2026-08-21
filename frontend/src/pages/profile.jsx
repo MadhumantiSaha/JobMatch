@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Navbar from "../components/navbar";
+import { API_BASE_URL } from "../config";
 
 const Profile = () => {
   const userString = localStorage.getItem("user");
@@ -35,7 +37,7 @@ const Profile = () => {
   const fetchPremium = async () => {
     setLoadingPremium(true);
     try {
-      const res = await fetch("http://localhost:8080/premium/my-membership", {
+      const res = await fetch(`${API_BASE_URL}/premium/my-membership`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -64,7 +66,7 @@ const Profile = () => {
 
     setDeactivating(true);
     try {
-      const res = await fetch("http://localhost:8080/premium/deactivate", {
+      const res = await fetch(`${API_BASE_URL}/premium/deactivate`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -88,145 +90,149 @@ const Profile = () => {
   };
 
   return (
-    <div className="register-container">
-      <div className="register-card">
-        <h2>My Profile</h2>
+    <>
+      <Navbar />
+    
+      <div className="register-container">
+        <div className="register-card">
+          <h2>My Profile</h2>
 
-        {/* ========== Profile Image ========== */}
-        <div className="profile-avatar-block">
-          {user?.image ? (
-            <div className="avatar avatar-lg">
-              <img
-                src={`http://localhost:8080/files/images/${user.image}`}
-                alt="Profile"
-              />
-            </div>
-          ) : (
-            <div className="avatar avatar-lg">
-              {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
-            </div>
-          )}
-        </div>
+          {/* ========== Profile Image ========== */}
+          <div className="profile-avatar-block">
+            {user?.image ? (
+              <div className="avatar avatar-lg">
+                <img
+                  src={`${API_BASE_URL}/files/images/${user.image}`}
+                  alt="Profile"
+                />
+              </div>
+            ) : (
+              <div className="avatar avatar-lg">
+                {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+              </div>
+            )}
+          </div>
 
-        {/* ========== Basic Info ========== */}
-        <div className="input-group">
-          <label>Name</label>
-          <input type="text" value={user?.name || ""} readOnly />
-        </div>
-
-        <div className="input-group">
-          <label>Email</label>
-          <input type="text" value={user?.email || ""} readOnly />
-        </div>
-
-        <div className="input-group">
-          <label>Contact</label>
-          <input type="text" value={user?.contact || ""} readOnly />
-        </div>
-
-        <div className="input-group">
-          <label>Role</label>
-          <input type="text" value={user?.role || ""} readOnly />
-        </div>
-
-        {/* ========== Experience Years ========== */}
-        <div className="input-group">
-          <label>Years of Experience</label>
-          <input
-            type="text"
-            value={
-              user?.experienceYears !== null && user?.experienceYears !== undefined
-                ? `${user.experienceYears} year${user.experienceYears !== 1 ? "s" : ""}`
-                : "Not set"
-            }
-            readOnly
-          />
-        </div>
-
-        {/* ========== Skills ========== */}
-        <div className="input-group">
-          <label>Skills</label>
-          {user?.skills && user.skills.length > 0 ? (
-            <div className="skill-chip-group">
-              {user.skills.map((skill) => (
-                <span key={skill} className="skill-chip">
-                  {skill}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <p className="state-message">No skills added yet</p>
-          )}
-        </div>
-
-        {/* ========== Resume Section ========== */}
-        {user?.role === "job_seeker" && (
+          {/* ========== Basic Info ========== */}
           <div className="input-group">
-            <label>Resume</label>
-            {user?.resume ? (
-              <a
-                href={`http://localhost:8080/files/resumes/${user.resume}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="resume-link"
-              >
-                📄 View / Download Resume
-              </a>
+            <label>Name</label>
+            <input type="text" value={user?.name || ""} readOnly />
+          </div>
+
+          <div className="input-group">
+            <label>Email</label>
+            <input type="text" value={user?.email || ""} readOnly />
+          </div>
+
+          <div className="input-group">
+            <label>Contact</label>
+            <input type="text" value={user?.contact || ""} readOnly />
+          </div>
+
+          <div className="input-group">
+            <label>Role</label>
+            <input type="text" value={user?.role || ""} readOnly />
+          </div>
+
+          {/* ========== Experience Years ========== */}
+          <div className="input-group">
+            <label>Years of Experience</label>
+            <input
+              type="text"
+              value={
+                user?.experienceYears !== null && user?.experienceYears !== undefined
+                  ? `${user.experienceYears} year${user.experienceYears !== 1 ? "s" : ""}`
+                  : "Not set"
+              }
+              readOnly
+            />
+          </div>
+
+          {/* ========== Skills ========== */}
+          <div className="input-group">
+            <label>Skills</label>
+            {user?.skills && user.skills.length > 0 ? (
+              <div className="skill-chip-group">
+                {user.skills.map((skill) => (
+                  <span key={skill} className="skill-chip">
+                    {skill}
+                  </span>
+                ))}
+              </div>
             ) : (
-              <p className="state-message">No resume uploaded yet</p>
+              <p className="state-message">No skills added yet</p>
             )}
           </div>
-        )}
 
-        {/* ========== Premium Section ========== */}
-        {user?.role === "job_seeker" && (
-          <div className="premium-section">
-            <h3>Premium Membership</h3>
-
-            {loadingPremium ? (
-              <p>Loading premium details...</p>
-            ) : premium ? (
-              <>
-                <div className="input-group">
-                  <label>Status</label>
-                  <input
-                    type="text"
-                    value={premium.membershipStatus}
-                    readOnly
-                    className="status-active-text"
-                  />
-                </div>
-
-                <div className="input-group">
-                  <label>Valid Till</label>
-                  <input type="text" value={premium.endDate} readOnly />
-                </div>
-
-                <button
-                  className="btn-danger btn-block"
-                  onClick={handleDeactivate}
-                  disabled={deactivating}
+          {/* ========== Resume Section ========== */}
+          {user?.role === "job_seeker" && (
+            <div className="input-group">
+              <label>Resume</label>
+              {user?.resume ? (
+                <a
+                  href={`${API_BASE_URL}/files/resumes/${user.resume}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="resume-link"
                 >
-                  {deactivating ? "Deactivating..." : "Deactivate Premium"}
-                </button>
-              </>
-            ) : (
-              <p>
-                You don't have an active premium plan.{" "}
-                <Link to="/premium">Buy Premium</Link>
-              </p>
-            )}
-          </div>
-        )}
+                  📄 View / Download Resume
+                </a>
+              ) : (
+                <p className="state-message">No resume uploaded yet</p>
+              )}
+            </div>
+          )}
 
-        {/* ========== Update Button ========== */}
-        <Link to="/update-profile">
-          <button className="register-btn btn-block" style={{ marginTop: "25px" }}>
-            Update Profile
-          </button>
-        </Link>
+          {/* ========== Premium Section ========== */}
+          {user?.role === "job_seeker" && (
+            <div className="premium-section">
+              <h3>Premium Membership</h3>
+
+              {loadingPremium ? (
+                <p>Loading premium details...</p>
+              ) : premium ? (
+                <>
+                  <div className="input-group">
+                    <label>Status</label>
+                    <input
+                      type="text"
+                      value={premium.membershipStatus}
+                      readOnly
+                      className="status-active-text"
+                    />
+                  </div>
+
+                  <div className="input-group">
+                    <label>Valid Till</label>
+                    <input type="text" value={premium.endDate} readOnly />
+                  </div>
+
+                  <button
+                    className="btn-danger btn-block"
+                    onClick={handleDeactivate}
+                    disabled={deactivating}
+                  >
+                    {deactivating ? "Deactivating..." : "Deactivate Premium"}
+                  </button>
+                </>
+              ) : (
+                <p>
+                  You don't have an active premium plan.{" "}
+                  <Link to="/premium">Buy Premium</Link>
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* ========== Update Button ========== */}
+          <Link to="/update-profile">
+            <button className="register-btn btn-block" style={{ marginTop: "25px" }}>
+              Update Profile
+            </button>
+          </Link>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

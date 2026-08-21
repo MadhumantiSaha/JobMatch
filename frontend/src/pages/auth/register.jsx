@@ -1,7 +1,11 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../config";
+import logo from "../../assets/logo.png";
 
 const Register = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     contact: "",
@@ -25,7 +29,6 @@ const Register = () => {
 
     console.log("Registration Data:", formData);
 
-    // Create FormData for file upload
     const data = new FormData();
     data.append("name", formData.name);
     data.append("contact", formData.contact);
@@ -33,27 +36,24 @@ const Register = () => {
     data.append("password", formData.password);
     data.append("role", formData.role);
 
-    // Here you can send data to backend using axios or fetch
     try {
-      const response = await fetch(
-        "http://localhost:8080/user",
-        {
-          method: "POST",
-          body: data,
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/user`, {
+        method: "POST",
+        body: data,
+      });
       if (!response.ok) {
         const text = await response.text();
         console.log(text);
+        alert("Registration failed");
         return;
       }
 
       const result = await response.json();
 
-
       if (response.ok) {
         console.log("Registration successful:", result);
         alert("Registration successful!");
+        navigate("/login");
       } else {
         console.log("Error:", result);
         alert(result.message || "Registration failed");
@@ -65,83 +65,138 @@ const Register = () => {
   };
 
   return (
-    <div className="register-container">
-      <div className="register-card">
-        <h2>Create Account</h2>
-        {/* <p>Register!</p> */}
+    <div className="register-container has-brand">
+      {/* Brand panel — desktop */}
+      <aside className="auth-brand-panel">
+        <Link to="/">
+          <img src={logo} alt="JobMatch" className="auth-brand-logo" />
+        </Link>
 
-        <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label>Full Name</label>
-            <input
-              type="text"
-              name="name"
-              placeholder="Enter your full name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
+        <div className="auth-brand-content">
+          <h1>Join JobMatch today</h1>
+          <p>
+            Whether you&apos;re hunting for your next role or hiring top talent —
+            get started in minutes.
+          </p>
+          <ul className="auth-brand-points">
+            <li>Free account for job seekers</li>
+            <li>Post jobs and manage applicants</li>
+            <li>Built-in messaging &amp; tracking</li>
+          </ul>
+        </div>
 
-          <div className="input-group">
-            <label>Contact Number</label>
-            <input
-              type="tel"
-              name="contact"
-              placeholder="Enter your contact number"
-              value={formData.contact}
-              onChange={handleChange}
-              required
-            />
-          </div>
+        <p className="auth-brand-footer">
+          © {new Date().getFullYear()} JobMatch
+        </p>
+      </aside>
 
-          <div className="input-group">
-            <label>Email Address</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="input-group">
-            <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Create a password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="input-group">
-            <label>Role</label>
-            <select
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-            >
-              <option value="job_seeker">Job Seeker</option>
-              <option value="job_provider">Job Provider</option>
-            </select>
-          </div>
-
-          <button type="submit" className="register-btn">
-            Register
-          </button>
-          
-          <div className="auth-footer">
-            Already Registered?{" "}
-            <Link to="/login">
-              Login
+      {/* Form side */}
+      <div className="auth-form-side">
+        <div className="register-card">
+          <div className="auth-card-logo">
+            <Link to="/">
+              <img src={logo} alt="JobMatch" />
             </Link>
           </div>
-        </form>
+
+          <h2>Create Account</h2>
+          <p className="auth-card-sub">
+            Fill in your details to get started
+          </p>
+
+          <form onSubmit={handleSubmit}>
+            <div className="input-group">
+              <label>Full Name</label>
+              <input
+                type="text"
+                name="name"
+                placeholder="Jane Doe"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                autoComplete="name"
+              />
+            </div>
+
+            <div className="input-group">
+              <label>Contact Number</label>
+              <input
+                type="tel"
+                name="contact"
+                placeholder="+91 98765 43210"
+                value={formData.contact}
+                onChange={handleChange}
+                required
+                autoComplete="tel"
+              />
+            </div>
+
+            <div className="input-group">
+              <label>Email Address</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="you@example.com"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                autoComplete="email"
+              />
+            </div>
+
+            <div className="input-group">
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                placeholder="Create a strong password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                autoComplete="new-password"
+              />
+            </div>
+
+            <div className="input-group">
+              <label>I am a</label>
+              <div className="role-toggle">
+                <label>
+                  <input
+                    type="radio"
+                    name="role"
+                    value="job_seeker"
+                    checked={formData.role === "job_seeker"}
+                    onChange={handleChange}
+                  />
+                  <span>Job Seeker</span>
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="role"
+                    value="job_provider"
+                    checked={formData.role === "job_provider"}
+                    onChange={handleChange}
+                  />
+                  <span>Job Provider</span>
+                </label>
+              </div>
+            </div>
+
+            <button type="submit" className="register-btn">
+              Create Account
+            </button>
+
+            <div className="auth-footer">
+              Already have an account?
+              <Link to="/login">Sign in</Link>
+            </div>
+          </form>
+
+          <div className="auth-back-home">
+            <Link to="/">← Back to home</Link>
+          </div>
+        </div>
       </div>
     </div>
   );

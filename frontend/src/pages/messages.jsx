@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../components/navbar";
+import { API_BASE_URL } from "../config";
 
 const Messages = () => {
   const [conversations, setConversations] = useState([]);
@@ -72,7 +73,7 @@ const Messages = () => {
     try {
       setLoadingList(true);
       const res = await axios.get(
-        "http://localhost:8080/messages/my-conversations",
+        `${API_BASE_URL}/messages/my-conversations`,
         authHeaders()
       );
       setConversations(res.data.data || []);
@@ -89,7 +90,7 @@ const Messages = () => {
       if (!silent) setLoadingChat(true);
 
       const res = await axios.get(
-        `http://localhost:8080/messages/conversation/${conversationId}`,
+        `${API_BASE_URL}/messages/conversation/${conversationId}`,
         authHeaders()
       );
 
@@ -127,7 +128,7 @@ const Messages = () => {
     try {
       setSending(true);
       await axios.post(
-        `http://localhost:8080/messages/send/${selectedId}`,
+        `${API_BASE_URL}/messages/send/${selectedId}`,
         { content: content.trim() },
         authHeaders()
       );

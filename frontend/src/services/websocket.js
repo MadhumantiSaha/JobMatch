@@ -1,5 +1,6 @@
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import { WS_URL } from "../config";
 
 let stompClient = null;
 let currentConversationId = null;
@@ -16,7 +17,7 @@ export function connectToConversation(conversationId, onMessageReceived, onError
   currentConversationId = conversationId;
 
   stompClient = new Client({
-    webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
+    webSocketFactory: () => new SockJS(WS_URL),
     connectHeaders: {
       Authorization: `Bearer ${token}`,
     },

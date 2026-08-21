@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 
 const NAV_SECTIONS = [
   {
@@ -16,7 +17,6 @@ const NAV_SECTIONS = [
         matchPrefixes: ["/my-jobs", "/view-applicant"],
         badgeKey: "jobs",
       },
-      { key: "post", label: "Post a Job", icon: "➕", path: "/post-job" },
       {
         key: "all-applicants",
         label: "All Applicants",
@@ -72,14 +72,14 @@ const ProviderSidebar = () => {
     if (!token) return;
 
     try {
-      const jobsRes = await axios.get("http://localhost:8080/job/my-jobs", {
+      const jobsRes = await axios.get(`${API_BASE_URL}/job/my-jobs`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const jobs = jobsRes.data.data || [];
 
       const results = await Promise.allSettled(
         jobs.map((job) =>
-          axios.get(`http://localhost:8080/application/job/${job.id}`, {
+          axios.get(`${API_BASE_URL}/application/job/${job.id}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
         )

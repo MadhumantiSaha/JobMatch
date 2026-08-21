@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import ProviderLayout from "../../components/provider-layout";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../config";
 
 const EMPTY_STATS = {
   total: 0,
@@ -49,7 +50,7 @@ const MyJobs = () => {
     setLoading(true);
 
     try {
-      const res = await axios.get("http://localhost:8080/job/my-jobs", {
+      const res = await axios.get(`${API_BASE_URL}/job/my-jobs`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -77,7 +78,7 @@ const MyJobs = () => {
     try {
       const results = await Promise.allSettled(
         jobList.map((job) =>
-          axios.get(`http://localhost:8080/application/job/${job.id}`, {
+          axios.get(`${API_BASE_URL}/application/job/${job.id}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
         )
@@ -108,7 +109,7 @@ const MyJobs = () => {
 
     setDeletingId(jobId);
     try {
-      await axios.delete(`http://localhost:8080/job/${jobId}`, {
+      await axios.delete(`${API_BASE_URL}/job/${jobId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

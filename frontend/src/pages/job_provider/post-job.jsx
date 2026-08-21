@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import ProviderLayout from "../../components/provider-layout";
+import { API_BASE_URL } from "../../config";
 
 const PostJob = () => {
   const token = localStorage.getItem("token");
@@ -14,8 +15,8 @@ const PostJob = () => {
     description: "",
   });
 
-  const [skills, setSkills] = useState([]);     // Skills as array
-  const [newSkill, setNewSkill] = useState(""); // Input for adding skill
+  const [skills, setSkills] = useState([]);     
+  const [newSkill, setNewSkill] = useState(""); 
 
   const handleChange = (e) => {
     setJob({
@@ -49,11 +50,11 @@ const PostJob = () => {
     try {
       const payload = {
         ...job,
-        skills: skills, // Send as array → Spring will convert to Set
+        skills: skills, 
       };
 
       const response = await axios.post(
-        "http://localhost:8080/job/jobpost",
+        `${API_BASE_URL}/job/jobpost`,
         payload,
         {
           headers: {

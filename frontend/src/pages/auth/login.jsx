@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../config";
+import logo from "../../assets/logo.png";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -20,16 +22,13 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(
-        "http://localhost:8080/user/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/user/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
       const result = await response.json();
 
@@ -37,25 +36,15 @@ const Login = () => {
 
       if (response.ok && result.success) {
         localStorage.setItem("token", result.token);
-
-        localStorage.setItem(
-          "user",
-          JSON.stringify(result.data)
-        );
-
-        // Store the role separately
-        localStorage.setItem(
-          "role",
-          result.data.role
-        );
+        localStorage.setItem("user", JSON.stringify(result.data));
+        localStorage.setItem("role", result.data.role);
 
         alert("Login Successful!");
-        if(result.data.role === "job_seeker"){
+        if (result.data.role === "job_seeker") {
           navigate("/jobs");
-        }else{
+        } else {
           navigate("/my-jobs");
         }
-        
       } else {
         alert(result.Error || result.message || "Invalid credentials");
       }
@@ -66,51 +55,88 @@ const Login = () => {
   };
 
   return (
-    <div className="register-container">
-      <div className="register-card">
-        <h2>Welcome Back</h2>
-        <p>Login to continue.</p>
+    <div className="register-container has-brand">
+      {/* Brand panel — desktop */}
+      <aside className="auth-brand-panel">
+        <Link to="/">
+          <img src={logo} alt="JobMatch" className="auth-brand-logo" />
+        </Link>
 
-        <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label>Email Address</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
+        <div className="auth-brand-content">
+          <h1>Welcome back to JobMatch</h1>
+          <p>
+            Sign in to continue your job search or manage openings — everything
+            in one place.
+          </p>
+          <ul className="auth-brand-points">
+            <li>Smart job matching tailored to you</li>
+            <li>Track applications in real time</li>
+            <li>Message recruiters instantly</li>
+          </ul>
+        </div>
 
-          <div className="input-group">
-            <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
+        <p className="auth-brand-footer">
+          © {new Date().getFullYear()} JobMatch
+        </p>
+      </aside>
 
-          <div className="forgot-password">
-            <Link to="/forget-password">
-              Forgot Password?
+      {/* Form side */}
+      <div className="auth-form-side">
+        <div className="register-card">
+          <div className="auth-card-logo">
+            <Link to="/">
+              <img src={logo} alt="JobMatch" />
             </Link>
           </div>
 
-          <button type="submit" className="register-btn">
-            Login
-          </button>
+          <h2>Welcome Back</h2>
+          <p className="auth-card-sub">Sign in to your account to continue</p>
 
-          <div className="login-footer">
-            Don't have an account?{" "}
-            <Link to="/register">Register</Link>
+          <form onSubmit={handleSubmit}>
+            <div className="input-group">
+              <label>Email Address</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="you@example.com"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                autoComplete="email"
+              />
+            </div>
+
+            <div className="input-group">
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                autoComplete="current-password"
+              />
+            </div>
+
+            <div className="forgot-password">
+              <Link to="/forget-password">Forgot Password?</Link>
+            </div>
+
+            <button type="submit" className="register-btn">
+              Sign In
+            </button>
+
+            <div className="login-footer">
+              Don&apos;t have an account?
+              <Link to="/register">Create one</Link>
+            </div>
+          </form>
+
+          <div className="auth-back-home">
+            <Link to="/">← Back to home</Link>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

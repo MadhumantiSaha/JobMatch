@@ -1,9 +1,6 @@
-/* ==========================================================
-   Navbar
-========================================================== */
-
 .navbar {
-  background: var(--text-primary);
+  /* background: var(--text-primary); */
+  background: #111827;
   color: var(--text-on-brand);
   display: flex;
   justify-content: space-between;
@@ -24,6 +21,17 @@
   height: 38px;
   width: auto;
   border-radius: var(--radius-sm);
+  display: block;
+}
+
+.logo-img-premium {
+  height: 42px;
+}
+
+.logo a {
+  display: flex;
+  align-items: center;
+  line-height: 0;
 }
 
 .nav-links {

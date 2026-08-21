@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../components/navbar";
+import { API_BASE_URL } from "../config";
 
 const JobDetails = () => {
   const { id } = useParams();
@@ -17,7 +18,7 @@ const JobDetails = () => {
 
   const fetchJob = async () => {
     try {
-      const res = await axios.get(`http://localhost:8080/job/${id}`, {
+      const res = await axios.get(`${API_BASE_URL}/job/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -40,7 +41,7 @@ const JobDetails = () => {
 
     try {
       await axios.post(
-        `http://localhost:8080/application/apply/${id}`,
+        `${API_BASE_URL}/application/apply/${id}`,
         formData,
         {
           headers: {

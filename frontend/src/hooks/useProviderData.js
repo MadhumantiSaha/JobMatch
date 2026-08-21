@@ -1,11 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 
-// Fetches every job the recruiter has posted, then every application for
-// each job, and flattens the applications into one array where each entry
-// is tagged with its job's id/title/location/type. Every provider page that
-// needs a cross-job view (Dashboard, Analytics, All Applicants, Shortlisted,
-// Interviews) shares this single hook instead of re-fetching independently.
 export const useProviderData = () => {
   const [jobs, setJobs] = useState([]);
   const [applications, setApplications] = useState([]);
@@ -18,7 +14,7 @@ export const useProviderData = () => {
     setError(null);
 
     try {
-      const jobsRes = await axios.get("http://localhost:8080/job/my-jobs", {
+      const jobsRes = await axios.get(`${API_BASE_URL}/job/my-jobs`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const jobList = jobsRes.data.data || [];
@@ -31,7 +27,7 @@ export const useProviderData = () => {
 
       const results = await Promise.allSettled(
         jobList.map((job) =>
-          axios.get(`http://localhost:8080/application/job/${job.id}`, {
+          axios.get(`${API_BASE_URL}/application/job/${job.id}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
         )

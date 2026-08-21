@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/navbar";
+import { API_BASE_URL } from "../../config";
 
 const JobSeekerDashboard = () => {
   const navigate = useNavigate();
@@ -49,8 +50,8 @@ const JobSeekerDashboard = () => {
 
       let url =
         role === "job_provider"
-          ? "http://localhost:8080/job/my-jobs"
-          : `http://localhost:8080/job?page=${page}&size=6`;
+          ? `${API_BASE_URL}/job/my-jobs`
+          : `${API_BASE_URL}/job?page=${page}&size=6`;
 
       const response = await fetch(url, {
         headers: {
@@ -92,7 +93,7 @@ const JobSeekerDashboard = () => {
       }
 
       const response = await fetch(
-        `http://localhost:8080/job/search?keyword=${encodeURIComponent(keyword)}`,
+        `${API_BASE_URL}/job/search?keyword=${encodeURIComponent(keyword)}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

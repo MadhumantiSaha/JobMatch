@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../../components/navbar";
+import { API_BASE_URL } from "../../config";
 
 const Premium = () => {
   const [loading, setLoading] = useState(false);
@@ -17,7 +18,7 @@ const Premium = () => {
   const checkPremiumStatus = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:8080/premium/status",
+        `${API_BASE_URL}/premium/status`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -37,7 +38,7 @@ const Premium = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:8080/premium/create-order",
+        `${API_BASE_URL}/premium/create-order`,
         {},
         {
           headers: {
@@ -83,7 +84,7 @@ const Premium = () => {
   const verifyPayment = async (paymentResponse) => {
     try {
       const res = await axios.post(
-        "http://localhost:8080/premium/verify",
+        `${API_BASE_URL}/premium/verify`,
         {
           razorpayOrderId: paymentResponse.razorpay_order_id,
           razorpayPaymentId: paymentResponse.razorpay_payment_id,

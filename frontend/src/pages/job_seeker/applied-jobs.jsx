@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../../components/navbar";
+import { API_BASE_URL } from "../../config";
 
 const AppliedJobs = () => {
   const [applications, setApplications] = useState([]);
@@ -20,7 +21,7 @@ const AppliedJobs = () => {
   const fetchApplications = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:8080/application/my-applications",
+        `${API_BASE_URL}/application/my-applications`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -37,7 +38,7 @@ const AppliedJobs = () => {
   const checkPremium = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:8080/premium/my-membership",
+        `${API_BASE_URL}/premium/my-membership`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setIsPremium(res.data?.membershipStatus === "ACTIVE");
@@ -51,7 +52,7 @@ const AppliedJobs = () => {
       return;
     }
     try {
-      await axios.delete(`http://localhost:8080/application/${applicationId}`, {
+      await axios.delete(`${API_BASE_URL}/application/${applicationId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert("Application withdrawn successfully.");
@@ -70,7 +71,7 @@ const AppliedJobs = () => {
     setMessagingId(recruiterId);
     try {
       const res = await axios.post(
-        `http://localhost:8080/messages/start/${recruiterId}`,
+        `${API_BASE_URL}/messages/start/${recruiterId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

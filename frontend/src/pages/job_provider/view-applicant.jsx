@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProviderLayout from "../../components/provider-layout";
+import { API_BASE_URL } from "../../config";
 
 const TABS = [
   { key: "ALL", label: "All" },
@@ -30,7 +31,7 @@ const ViewApplicants = () => {
   const fetchApplicants = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:8080/application/job/${jobId}`,
+        `${API_BASE_URL}/application/job/${jobId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -44,7 +45,7 @@ const ViewApplicants = () => {
   const updateStatus = async (applicationId, status) => {
     try {
       await axios.put(
-        `http://localhost:8080/application/${applicationId}/status`,
+        `${API_BASE_URL}/application/${applicationId}/status`,
         null,
         {
           params: { status },
@@ -68,7 +69,7 @@ const ViewApplicants = () => {
     setMessagingId(seekerId);
     try {
       const res = await axios.post(
-        `http://localhost:8080/messages/start/${seekerId}`,
+        `${API_BASE_URL}/messages/start/${seekerId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -104,7 +105,6 @@ const ViewApplicants = () => {
     application.job_seeker_id ||
     null;
 
-  // Counts per status power both the summary chips and the filter tab badges.
   const counts = useMemo(() => {
     const base = {
       ALL: applications.length,
@@ -237,7 +237,7 @@ const ViewApplicants = () => {
 
                           {application.resume && (
                             <a
-                              href={`http://localhost:8080/files/resumes/${application.resume}`}
+                              href={`${API_BASE_URL}/files/resumes/${application.resume}`}
                               target="_blank"
                               rel="noreferrer"
                               className="resume-link"
