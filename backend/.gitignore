@@ -5,6 +5,14 @@ target/
 !**/src/test/**/target/
 **/src/main/resources/application.properties
 
+# Secrets — never commit
+*.pem
+jobmatch-key-pair.pem
+
+# User uploads & local runtime data
+uploads/
+applications/
+
 ### STS ###
 .apt_generated
 .classpath
