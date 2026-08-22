@@ -14,6 +14,13 @@ const Navbar = () => {
 
   const token = localStorage.getItem("token");
 
+  const brandLogo =
+    role === "job_provider"
+      ? recruiterLogo
+      : isPremium
+        ? premiumLogo
+      : logo;
+
   useEffect(() => {
     if (!token) return;
 
@@ -95,9 +102,17 @@ const Navbar = () => {
       <div className="logo">
         <Link to={role === "job_provider" ? "/my-jobs" : "/jobs"}>
           <img
-            src={role === "job_provider" ? recruiterLogo : isPremium ? premiumLogo : logo}
-            alt={isPremium ? "JobMatch Premium" : "JobMatch"}
-            className={`logo-img ${isPremium ? "logo-img-premium" : ""}`}
+            src={brandLogo}
+            alt={
+              role === "job_provider"
+                ? "JobMatch for Recruiters"
+                : isPremium
+                  ? "JobMatch Premium"
+                  : "JobMatch"
+            }
+            className={`logo-img ${
+              role === "job_provider" ? "logo-img-recruiter" : ""
+            } ${isPremium ? "logo-img-premium" : ""}`}
           />
         </Link>
       </div>
