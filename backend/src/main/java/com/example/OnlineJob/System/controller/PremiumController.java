@@ -21,7 +21,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/premium")
-@CrossOrigin(origins = "http://localhost:5173")
 public class PremiumController {
 
     @Autowired private PremiumService premiumService;

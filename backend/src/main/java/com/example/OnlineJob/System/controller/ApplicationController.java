@@ -17,7 +17,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/application")
-@CrossOrigin(origins = "http://localhost:5173")
 public class ApplicationController {
     @Autowired
     private ApplicationServices applicationServices;

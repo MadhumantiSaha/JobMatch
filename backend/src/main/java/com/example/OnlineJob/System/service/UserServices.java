@@ -10,19 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class UserServices {
-    private final String UPLOAD_DIR = "uploads/";
 
     private final PasswordEncoder passwordEncoder;
 
@@ -32,18 +26,20 @@ public class UserServices {
     @Autowired
     private ResumeParserService resumeParserService;
 
-//    Constructer Injection
+    @Autowired
+    private S3StorageService s3StorageService;
+
+    //    Constructer Injection
     public UserServices(){
         this.passwordEncoder = new BCryptPasswordEncoder(12);
     }
 
-    private final String imageDir = "register/images/";
 
-//    Save user details
+    //    Save user details
     public User saveUser(User user, MultipartFile img) throws IOException {
         if (img != null && !img.isEmpty()) {
-            String imageFileName = saveFile(img, UPLOAD_DIR + "images/");
-            user.setImage(imageFileName);
+            String imageKey = s3StorageService.upload(img, "uploads/images");
+            user.setImage(imageKey);
         }
 
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
@@ -57,7 +53,7 @@ public class UserServices {
     public List<User> getAllUser(){
         return userRepository.findAll();
     }
-//    READ BY ID
+    //    READ BY ID
     public Optional<User> getUserById(Long id){
         return userRepository.findById(id);
     }
@@ -69,23 +65,6 @@ public class UserServices {
     public User save(User user){
         return userRepository.save(user);
     }
-
-//    save updated files
-    private String saveFile(MultipartFile file, String directory) throws IOException {
-        Path path = Paths.get(directory);
-        if (!Files.exists(path)) {
-            Files.createDirectories(path);
-        }
-
-        String originalFilename = file.getOriginalFilename();
-        String fileName = UUID.randomUUID() + "_" + originalFilename;
-
-        Files.copy(file.getInputStream(), path.resolve(fileName),
-                StandardCopyOption.REPLACE_EXISTING);
-
-        return fileName;
-    }
-
 
     // Update method in UserServices.java
     public User updateUser(Long userId,
@@ -125,18 +104,20 @@ public class UserServices {
 
         // Image
         if (image != null && !image.isEmpty()) {
-            String imageFileName = saveFile(image, UPLOAD_DIR + "images/");
-            user.setImage(imageFileName);
+            String imageKey = s3StorageService.upload(image, "uploads/images");
+            user.setImage(imageKey);
         }
 
         // ===== RESUME + AUTO SKILL EXTRACTION =====
         if (user.getRole() == User.Role.job_seeker) {
             if (resume != null && !resume.isEmpty()) {
-                // 1. Save the file
-                String resumeFileName = saveFile(resume, UPLOAD_DIR + "resumes/");
-                user.setResume(resumeFileName);
+                // 1. Upload to S3
+                String resumeKey = s3StorageService.upload(resume, "uploads/resumes");
+                user.setResume(resumeKey);
 
                 // 2. Extract skills automatically and store them
+                //    (unchanged — still parses the MultipartFile directly, before/independent
+                //    of the S3 upload)
                 try {
                     Set<String> extractedSkills = resumeParserService.extractSkills(resume);
                     user.setSkills(extractedSkills);   // ← overwrites / sets skills
@@ -149,8 +130,8 @@ public class UserServices {
         }
         else if (user.getRole() == User.Role.job_provider) {
             if (companyDetails != null && !companyDetails.isEmpty()) {
-                String companyFileName = saveFile(companyDetails, UPLOAD_DIR + "company/");
-                user.setCompanyDetails(companyFileName);
+                String companyKey = s3StorageService.upload(companyDetails, "uploads/company");
+                user.setCompanyDetails(companyKey);
             }
         }
 
@@ -158,11 +139,11 @@ public class UserServices {
     }
 
 
-//    DELETE
+    //    DELETE
     public void deleteUser(Long id){
         userRepository.deleteById(id);
     }
-//    OPTIONAL:Helper for login
+    //    OPTIONAL:Helper for login
     public boolean verifyPassword(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }

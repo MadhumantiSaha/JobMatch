@@ -30,5 +30,4 @@ public class WebSocketChatController {
                 conversationId, sender.getId(), request.getContent()
         );
     }
-
 }

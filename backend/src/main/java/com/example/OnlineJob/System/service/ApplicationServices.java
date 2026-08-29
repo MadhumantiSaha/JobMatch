@@ -3,22 +3,17 @@ package com.example.OnlineJob.System.service;
 import com.example.OnlineJob.System.model.Application;
 import com.example.OnlineJob.System.model.User;
 import com.example.OnlineJob.System.repository.ApplicationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.OnlineJob.System.model.Job;
 import com.example.OnlineJob.System.repository.JobRepository;
 import com.example.OnlineJob.System.repository.UserRepository;
-import com.example.OnlineJob.System.service.EmailService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 
 @Service
@@ -27,6 +22,9 @@ public class ApplicationServices {
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
     private final EmailService emailService;
+
+    @Autowired
+    private S3StorageService s3StorageService;
 
     public ApplicationServices(ApplicationRepository applicationRepository,
                                JobRepository jobRepository,
@@ -38,26 +36,12 @@ public class ApplicationServices {
         this.emailService = emailService;
     }
 
-    private final String UPLOAD_DIR = "application resumes/";
+//    private final String UPLOAD_DIR = "application resumes/";
 
     private String saveResumeFile(MultipartFile file) throws IOException {
-        String directory = "applications/resumes/";
-        Path path = Paths.get(directory);
-
-        if (!Files.exists(path)) {
-            Files.createDirectories(path);
-        }
-
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-
-        Files.copy(
-                file.getInputStream(),
-                path.resolve(fileName),
-                StandardCopyOption.REPLACE_EXISTING
-        );
-
-        return fileName;
+        return s3StorageService.upload(file, "applications/resumes");
     }
+
 
     // Apply to a job - now supports resume upload
     public Application applyToJob(Long jobId, Long userId, MultipartFile resumeFile) throws IOException {

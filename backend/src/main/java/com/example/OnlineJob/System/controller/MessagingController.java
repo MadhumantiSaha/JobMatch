@@ -16,7 +16,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/messages")
-@CrossOrigin(origins = "http://localhost:5173")
 public class MessagingController {
 
     @Autowired
